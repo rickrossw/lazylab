@@ -19,19 +19,32 @@ Requires Node 20+.
 
 ## Deploy to GitHub Pages (free)
 
-The site is a static export. `.github/workflows/deploy.yml` builds, tests and publishes it on every push to `main`.
+Live at **https://rickrossw.github.io/lazylab/**. It is served from the `gh-pages` branch.
 
-1. Create a GitHub repository (e.g. `lazylab`) and push this project to its `main` branch.
-2. In the repository, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
-3. The workflow runs automatically. The site appears at `https://<your-user>.github.io/<repo>/`. The base path is detected automatically.
+To publish changes:
+
+```bash
+npm run deploy                                      # tests, builds, pushes ./out to gh-pages
+```
 
 ### Custom domain (lazylab.com)
 
-1. In **Settings → Pages → Custom domain**, enter `lazylab.com` and save.
-2. At your DNS provider, add:
+1. At your DNS provider, add:
    - `A` records for `lazylab.com` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - `CNAME` record for `www` → `<your-user>.github.io`
-3. Once DNS resolves, tick **Enforce HTTPS**, then re-run the deploy workflow (Actions → Deploy to GitHub Pages → Run workflow) so the site rebuilds without the `/<repo>` prefix.
+   - `CNAME` record for `www` → `rickrossw.github.io`
+2. Deploy for the root path with a CNAME file: `BASE_PATH= CNAME=lazylab.com npm run deploy`
+3. In **Settings → Pages**, confirm the custom domain and tick **Enforce HTTPS** once the certificate is issued.
+
+### Optional: deploy automatically on every push
+
+`.github/workflows/deploy.yml` (kept locally, not yet committed) builds and deploys with GitHub Actions. Pushing workflow files needs the `workflow` scope on your GitHub token:
+
+```bash
+gh auth refresh -h github.com -s workflow
+git add .github && git commit -m "Add Pages deploy workflow" && git push
+```
+
+Then set **Settings → Pages → Source** to **GitHub Actions**.
 
 ## How it works
 
