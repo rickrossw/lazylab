@@ -174,15 +174,7 @@ pre { background: var(--term-bg); color: var(--term-text); padding: 14px 16px; b
 .grid-2 { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 
-/* ---------- landing ---------- */
-.hero { padding: 64px 0 40px; display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; }
-.hero h1 .hl { color: var(--accent); }
-.hero p.lede { font-size: 19px; color: var(--text-2); max-width: 34em; }
-@media (max-width: 900px) { .hero { grid-template-columns: 1fr; padding-top: 36px; } }
-.section { padding: 44px 0; }
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
-.step-num { font-family: var(--font-mono); color: var(--accent); font-size: 13px; }
+/* ---------- cards & footer ---------- */
 .track-card { border-top: 3px solid var(--track, var(--accent)); }
 .footer { border-top: 1px solid var(--border); margin-top: 60px; padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
 .footer a { color: var(--text-2); }
