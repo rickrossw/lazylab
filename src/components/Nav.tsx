@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const LINKS = [
+  { href: "/", label: "Play" },
   { href: "/atlas/", label: "Atlas" },
   { href: "/lab/", label: "Lab" },
   { href: "/missions/", label: "Missions" },
@@ -42,7 +43,7 @@ export function Nav() {
         </Link>
         <nav className="nav-links">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className={path.startsWith(l.href.replace(/\/$/, "")) ? "active" : ""}>
+            <Link key={l.href} href={l.href} className={(l.href === "/" ? path === "/" : path.startsWith(l.href.replace(/\/$/, ""))) ? "active" : ""}>
               {l.label}
             </Link>
           ))}

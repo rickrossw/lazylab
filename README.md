@@ -19,12 +19,12 @@ Requires Node 20+.
 
 ## Deploy to GitHub Pages (free)
 
-Live at **https://rickrossw.github.io/lazylab/**. It is served from the `gh-pages` branch.
+Live at **https://lazylab.com/** (served from the `gh-pages` branch).
 
 To publish changes:
 
 ```bash
-npm run deploy                                      # tests, builds, pushes ./out to gh-pages
+BASE_PATH= CNAME=lazylab.com npm run deploy        # tests, builds, pushes ./out to gh-pages
 ```
 
 ### Custom domain (lazylab.com)
