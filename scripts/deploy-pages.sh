@@ -18,6 +18,6 @@ git init -q -b gh-pages
 git add -A
 git -c user.name="$(git -C .. config user.name)" -c user.email="$(git -C .. config user.email)" \
   commit -q -m "Deploy $(git -C .. rev-parse --short HEAD)"
-git push -f -q "$repo_url" gh-pages
+git -c http.postBuffer=524288000 push -f -q "$repo_url" gh-pages
 rm -rf .git
 echo "Published to gh-pages${domain:+ for https://$domain/}"
