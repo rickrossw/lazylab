@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CHAPTERS } from "@/content/chapters";
 import { TRACK_BOSSES, TRACK_LEVELS } from "@/content/levels";
-import { getMission, type TrackId } from "@/missions";
+import { chaptersL, missionTitle } from "@/content/localized";
+import type { TrackId } from "@/missions";
+import { useLang } from "@/i18n/client";
 import { useProgress } from "./useProgress";
 
 export function PlaybookToc({ current, titles }: { current?: TrackId; titles: Record<string, string> }) {
+  const { lang, t, L } = useLang();
   const p = useProgress();
   const [active, setActive] = useState<string | null>(null);
   useEffect(() => {
@@ -25,18 +27,16 @@ export function PlaybookToc({ current, titles }: { current?: TrackId; titles: Re
   }, [current]);
 
   return (
-    <nav aria-label="Playbook contents">
-      {CHAPTERS.map((c) => (
+    <nav aria-label={t("toc.label")}>
+      {chaptersL(lang).map((c) => (
         <div key={c.track}>
-          <Link href={`/play/${c.track}/`} className={`ch${c.track === current ? " current" : ""}`}>
+          <Link href={L(`/play/${c.track}/`)} className={`ch${c.track === current ? " current" : ""}`}>
             {c.n}. {c.title}
           </Link>
           {c.track === current &&
             TRACK_LEVELS[c.track].map((s, i) => (
               <a key={s} href={`#${s}`} className={`sec${active === s ? " active" : ""}`}>
-                <span className={`tick${p.levels[s] ? " done" : ""}`} aria-label={p.levels[s] ? "mastered" : undefined}>
-                  {p.levels[s] ? "✓" : `${c.n}.${i + 1}`}
-                </span>
+                <span className={`tick${p.levels[s] ? " done" : ""}`}>{p.levels[s] ? "✓" : `${c.n}.${i + 1}`}</span>
                 {titles[s]}
               </a>
             ))}
@@ -44,7 +44,7 @@ export function PlaybookToc({ current, titles }: { current?: TrackId; titles: Re
             TRACK_BOSSES[c.track].map((id) => (
               <a key={id} href="#boss" className="sec boss">
                 <span className={`tick${p.missions[id] ? " done" : ""}`}>{p.missions[id] ? "✓" : "◆"}</span>
-                Boss: {getMission(id)?.title}
+                {t("toc.boss", { title: missionTitle(id, lang) })}
               </a>
             ))}
         </div>

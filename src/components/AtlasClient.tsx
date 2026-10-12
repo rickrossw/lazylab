@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { loadProgress, markRead } from "@/lib/progress";
+import { useLang } from "@/i18n/client";
 
 export interface AtlasListItem {
   slug: string;
@@ -12,6 +13,7 @@ export interface AtlasListItem {
 }
 
 export function AtlasSearch({ items, categories }: { items: AtlasListItem[]; categories: string[] }) {
+  const { t, L } = useLang();
   const [q, setQ] = useState("");
   const [read, setRead] = useState<string[]>([]);
   useEffect(() => setRead(loadProgress().atlasRead), []);
@@ -21,9 +23,9 @@ export function AtlasSearch({ items, categories }: { items: AtlasListItem[]; cat
   }, [q, items]);
   return (
     <>
-      <input className="atlas-search" placeholder={`Search ${items.length} concepts — try "nvlink", "xid", "zero"…`} value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search the Atlas" />
+      <input className="atlas-search" placeholder={t("glossary.search", { n: items.length })} value={q} onChange={(e) => setQ(e.target.value)} aria-label={t("glossary.search", { n: items.length })} />
       <p className="muted" style={{ fontSize: 13.5, margin: "8px 4px 0" }}>
-        {read.length} of {items.length} read on this device
+        {t("glossary.read", { n: read.length, total: items.length })}
       </p>
       {categories.map((cat) => {
         const list = filtered.filter((i) => i.category === cat);
@@ -33,7 +35,7 @@ export function AtlasSearch({ items, categories }: { items: AtlasListItem[]; cat
             <h2 style={{ fontSize: "1.2rem" }}>{cat}</h2>
             <div className="term-list">
               {list.map((i) => (
-                <Link key={i.slug} href={`/atlas/${i.slug}/`} className="card card-link">
+                <Link key={i.slug} href={L(`/atlas/${i.slug}/`)} className="card card-link">
                   <div className="t">
                     {i.title} {read.includes(i.slug) && <span style={{ color: "var(--good-text)", fontSize: 13 }}>✓</span>}
                   </div>
@@ -44,7 +46,7 @@ export function AtlasSearch({ items, categories }: { items: AtlasListItem[]; cat
           </section>
         );
       })}
-      {!filtered.length && <p className="muted" style={{ marginTop: 24 }}>Nothing matches “{q}”.</p>}
+      {!filtered.length && <p className="muted" style={{ marginTop: 24 }}>{t("glossary.nothing", { q })}</p>}
     </>
   );
 }

@@ -1,16 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { useLang } from "@/i18n/client";
 
 export default function NotFound() {
+  const { t, L } = useLang();
   return (
     <div className="container narrow" style={{ padding: "80px 20px" }}>
-      <div className="eyebrow">Xid 404</div>
-      <h1>This page has fallen off the bus.</h1>
-      <p className="muted">We couldn&apos;t find what you were looking for. Try draining and requeueing:</p>
-      <div className="row">
-        <Link href="/" className="btn primary">Home</Link>
-        <Link href="/atlas/" className="btn">Atlas</Link>
-        <Link href="/missions/" className="btn">Missions</Link>
-      </div>
+      <div className="eyebrow">{t("404.eyebrow")}</div>
+      <h1>{t("404.title")}</h1>
+      <p className="muted">{t("404.body")}</p>
+      <Link href={L("/")} className="btn primary">{t("404.home")}</Link>
     </div>
   );
 }

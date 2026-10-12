@@ -7,15 +7,10 @@ import type { FaultKind } from "@/sim/types";
 import { jobScript } from "@/missions";
 import { Console } from "./Console";
 import { useSimulation } from "./useSimulation";
+import { useLang } from "@/i18n/client";
+import type { UIKey } from "@/i18n/ui";
 
-const FAULTS: { kind: FaultKind; label: string; what: string }[] = [
-  { kind: "thermal", label: "Fan failure", what: "GPU overheats and engages HW thermal slowdown → straggler" },
-  { kind: "xid79", label: "Xid 79", what: "GPU falls off the PCIe bus → jobs on it crash" },
-  { kind: "ecc", label: "ECC DBE", what: "Uncorrectable memory error (Xid 48) → reset required" },
-  { kind: "nvlink", label: "NVLink fault", what: "Xid 74, intra-node traffic falls back to PCIe" },
-  { kind: "ib", label: "IB port down", what: "Multi-node collectives hang, then time out" },
-  { kind: "miner", label: "Rogue process", what: "Something is using a GPU outside the scheduler" },
-];
+const FAULTS: FaultKind[] = ["thermal", "xid79", "ecc", "nvlink", "ib", "miner"];
 
 interface LabConfig {
   gpu: GpuModelId;
@@ -58,6 +53,7 @@ function makeLab(cfg: LabConfig, seed: number): Simulation {
 }
 
 export function LabClient() {
+  const { t } = useLang();
   const [cfg, setCfg] = useState<LabConfig>({ gpu: "H100", nodes: 4, fabric: "IB-NDR" });
   const [draft, setDraft] = useState<LabConfig>(cfg);
   const [seed, setSeed] = useState(1);
@@ -85,13 +81,13 @@ export function LabClient() {
     <>
       <div className="panel">
         <div className="panel-head">
-          <strong>Build</strong>
-          <span className="muted">changes restart the lab</span>
+          <strong>{t("lab.build")}</strong>
+          <span className="muted">{t("lab.buildSub")}</span>
         </div>
         <div className="panel-body">
           <div className="controls" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
             <div className="control">
-              <label htmlFor="lab-gpu">GPU</label>
+              <label htmlFor="lab-gpu">{t("lab.gpu")}</label>
               <select id="lab-gpu" value={draft.gpu} onChange={(e) => setDraft({ ...draft, gpu: e.target.value as GpuModelId })}>
                 {Object.values(GPUS).map((g) => (
                   <option key={g.id} value={g.id}>{g.id}</option>
@@ -99,7 +95,7 @@ export function LabClient() {
               </select>
             </div>
             <div className="control">
-              <label htmlFor="lab-nodes">Nodes</label>
+              <label htmlFor="lab-nodes">{t("lab.nodes")}</label>
               <select id="lab-nodes" value={draft.nodes} onChange={(e) => setDraft({ ...draft, nodes: Number(e.target.value) })}>
                 {[1, 2, 3, 4, 5, 6, 8].map((n) => (
                   <option key={n} value={n}>{n}</option>
@@ -107,7 +103,7 @@ export function LabClient() {
               </select>
             </div>
             <div className="control">
-              <label htmlFor="lab-fab">Network</label>
+              <label htmlFor="lab-fab">{t("lab.net")}</label>
               <select id="lab-fab" value={draft.fabric} onChange={(e) => setDraft({ ...draft, fabric: e.target.value as FabricId })}>
                 {Object.values(FABRICS).map((f) => (
                   <option key={f.id} value={f.id}>{f.id}</option>
@@ -116,20 +112,20 @@ export function LabClient() {
             </div>
           </div>
           <div className="row">
-            <button className="btn small primary" onClick={() => rebuild(draft)}>Rebuild cluster</button>
-            <button className="btn small" onClick={() => rebuild(cfg)}>Reset</button>
+            <button className="btn small primary" onClick={() => rebuild(draft)}>{t("lab.rebuild")}</button>
+            <button className="btn small" onClick={() => rebuild(cfg)}>{t("lab.reset")}</button>
           </div>
         </div>
       </div>
       <div className="panel">
         <div className="panel-head">
-          <strong>Chaos</strong>
-          <span className="muted">inject a fault</span>
+          <strong>{t("lab.chaos")}</strong>
+          <span className="muted">{t("lab.chaosSub")}</span>
         </div>
         <div className="panel-body">
           <div className="controls" style={{ gridTemplateColumns: "1fr 1fr" }}>
             <div className="control">
-              <label htmlFor="f-node">Node</label>
+              <label htmlFor="f-node">{t("lab.node")}</label>
               <select id="f-node" value={faultNode} onChange={(e) => setFaultNode(e.target.value)}>
                 {ctl.sim.state.nodes.map((n) => (
                   <option key={n.name}>{n.name}</option>
@@ -137,7 +133,7 @@ export function LabClient() {
               </select>
             </div>
             <div className="control">
-              <label htmlFor="f-gpu">GPU</label>
+              <label htmlFor="f-gpu">{t("lab.gpu")}</label>
               <select id="f-gpu" value={faultGpu} onChange={(e) => setFaultGpu(Number(e.target.value))}>
                 {Array.from({ length: 8 }, (_, i) => (
                   <option key={i} value={i}>{i}</option>
@@ -147,8 +143,8 @@ export function LabClient() {
           </div>
           <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 6 }}>
             {FAULTS.map((f) => (
-              <button key={f.kind} className="btn small" style={{ justifyContent: "center" }} title={f.what} onClick={() => inject(f.kind)}>
-                {f.label}
+              <button key={f} className="btn small" style={{ justifyContent: "center" }} title={t(`fault.${f}.d` as UIKey)} onClick={() => inject(f)}>
+                {t(`fault.${f}` as UIKey)}
               </button>
             ))}
           </div>
@@ -168,10 +164,7 @@ export function LabClient() {
     <Console
       ctl={ctl}
       side={side}
-      welcome={[
-        "LazyLab simulated cluster. Type `help` for commands, `cat README.md` for ideas.",
-        "A 7B training job (train.sh) was submitted for you. Try: squeue, then tail slurm-101.out",
-      ]}
+      welcome={[t("lab.welcome1"), t("lab.welcome2")]}
       quick={["help", "squeue", "sinfo", "tail slurm-101.out", "ssh node-1", "nvidia-smi", "exit"]}
     />
   );

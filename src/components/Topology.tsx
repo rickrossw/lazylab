@@ -2,6 +2,7 @@
 
 import type { Simulation } from "@/sim/sim";
 import type { Gpu } from "@/sim/types";
+import { useLang } from "@/i18n/client";
 
 export type TopoMode = "util" | "temp" | "power";
 
@@ -40,6 +41,7 @@ export function Topology({
   selected?: GpuRef | null;
   onSelect?: (r: GpuRef) => void;
 }) {
+  const { t } = useLang();
   const tdp = sim.gpuSpec.tdpW;
   const nv = sim.gpuSpec.nvlinkGBs > 0;
   return (
@@ -77,7 +79,7 @@ export function Topology({
               })}
             </div>
             <div className={`nvswitch${nv && !n.nvlinkUp ? " down" : ""}`} title={nv ? (n.nvlinkUp ? "NVSwitch / NVLink healthy" : "NVLink fault") : "PCIe only (no NVLink)"} style={nv ? undefined : { opacity: 0.35 }} />
-            <div className="job-tag">{job ? `job ${job.id} · ${job.name}${job.phase === "init" ? " (starting)" : ""}` : n.drained ? n.drainReason : "idle"}</div>
+            <div className="job-tag">{job ? `job ${job.id} · ${job.name}${job.phase === "init" ? ` ${t("cluster.starting")}` : ""}` : n.drained ? n.drainReason : t("cluster.idle")}</div>
           </div>
         );
       })}
@@ -86,6 +88,7 @@ export function Topology({
 }
 
 export function TopoLegend({ mode }: { mode: TopoMode }) {
+  const { t } = useLang();
   const hue = mode === "temp" ? "var(--series-2)" : "var(--series-1)";
   const [lo, hi] = mode === "util" ? ["0%", "100% util"] : mode === "power" ? ["idle", "TDP"] : ["28°C", "92°C"];
   return (
@@ -93,8 +96,8 @@ export function TopoLegend({ mode }: { mode: TopoMode }) {
       {lo}
       <span className="ramp" style={{ background: `linear-gradient(90deg, color-mix(in oklab, ${hue} 8%, var(--surface-3)), ${hue})` }} />
       {hi}
-      <span title="Thermal slowdown" style={{ color: "var(--serious)", marginLeft: 6 }}>▲ throttled</span>
-      <span style={{ color: "var(--critical)" }}>✕ lost</span>
+      <span style={{ color: "var(--serious)", marginLeft: 6 }}>{t("cluster.throttled")}</span>
+      <span style={{ color: "var(--critical)" }}>{t("cluster.lost")}</span>
     </span>
   );
 }

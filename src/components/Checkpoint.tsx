@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { CHALLENGES, LEVEL_XP, LEVEL_XP_RETRY, checkNumber, type Question } from "@/content/levels";
+import { LEVEL_XP, LEVEL_XP_RETRY, checkNumber, type Question } from "@/content/levels";
+import { challengesL } from "@/content/localized";
+import { useLang } from "@/i18n/client";
 import { recordLevel } from "@/lib/progress";
 import { useProgress } from "./useProgress";
 
 type State = { picked?: number; typed?: string; ok?: boolean };
 
 function QuestionView({ q, state, onAnswer }: { q: Question; state: State; onAnswer: (s: State) => void }) {
+  const { t } = useLang();
   const [typed, setTyped] = useState("");
   const answered = state.ok !== undefined;
   return (
@@ -15,7 +18,7 @@ function QuestionView({ q, state, onAnswer }: { q: Question; state: State; onAns
       <div className="q">{q.prompt}</div>
       {q.code && <pre>{q.code}</pre>}
       {q.kind === "choice" ? (
-        <div className="opts" role="group" aria-label="Answer options">
+        <div className="opts" role="group" aria-label={t("cp.options")}>
           {q.options.map((o, i) => {
             const cls = answered && i === q.answer ? " right" : answered && i === state.picked ? " wrong" : "";
             return (
@@ -33,17 +36,17 @@ function QuestionView({ q, state, onAnswer }: { q: Question; state: State; onAns
             onAnswer({ typed, ok: checkNumber(q, typed) });
           }}
         >
-          <input inputMode="decimal" value={typed} onChange={(e) => setTyped(e.target.value)} placeholder="Your answer" aria-label="Numeric answer" disabled={state.ok} />
+          <input inputMode="decimal" value={typed} onChange={(e) => setTyped(e.target.value)} placeholder={t("cp.answer")} aria-label={t("cp.answer")} disabled={state.ok} />
           {q.unit && <span className="muted">{q.unit}</span>}
           <button className="btn small primary" type="submit" disabled={state.ok || !typed.trim()}>
-            Check
+            {t("cp.check")}
           </button>
         </form>
       )}
       {answered && (
         <div className={`feedback${state.ok ? "" : " bad"}`} role="status">
-          <strong>{state.ok ? "Correct. " : q.kind === "number" ? `Not quite. The answer is ${q.answer}${q.unit ? " " + q.unit : ""}. ` : "Not quite. "}</strong>
-          {state.ok || q.kind === "number" ? q.explain : "Try another option."}
+          <strong>{state.ok ? t("cp.correct") : q.kind === "number" ? t("cp.notQuiteNum", { a: `${q.answer}${q.unit ? " " + q.unit : ""}` }) : t("cp.notQuite")}</strong>
+          {state.ok || q.kind === "number" ? q.explain : t("cp.tryAnother")}
         </div>
       )}
     </div>
@@ -52,7 +55,8 @@ function QuestionView({ q, state, onAnswer }: { q: Question; state: State; onAns
 
 /** End-of-section challenge. Answering everything correctly masters the level and awards XP. */
 export function Checkpoint({ slug }: { slug: string }) {
-  const qs = CHALLENGES[slug] ?? [];
+  const { lang, t } = useLang();
+  const qs = challengesL(slug, lang);
   const p = useProgress();
   const mastered = p.levels[slug];
   const [states, setStates] = useState<State[]>(() => qs.map(() => ({})));
@@ -66,11 +70,11 @@ export function Checkpoint({ slug }: { slug: string }) {
       <div className="checkpoint">
         <div className="mastered">
           <span className="seal" aria-hidden>✓</span>
-          <strong>Mastered</strong>
-          <span className="muted">+{earned ?? mastered.xp} XP{earned ? " earned" : ""}</span>
+          <strong>{t("cp.mastered")}</strong>
+          <span className="muted">+{earned ?? mastered.xp} XP{earned ? ` ${t("cp.earned")}` : ""}</span>
           <span className="spacer" />
           <button className="btn small" onClick={() => { setReplay(true); setStates(qs.map(() => ({}))); setMissed(false); }}>
-            Try the checkpoint again
+            {t("cp.again")}
           </button>
         </div>
       </div>
@@ -95,12 +99,12 @@ export function Checkpoint({ slug }: { slug: string }) {
   };
 
   return (
-    <div className="checkpoint" aria-label="Checkpoint">
+    <div className="checkpoint" aria-label={t("cp.tag")}>
       <div className="checkpoint-head">
-        <span className="tag">Checkpoint</span>
+        <span className="tag">{t("cp.tag")}</span>
         <span className="xp">+{LEVEL_XP} XP</span>
         <span className="muted" style={{ fontSize: 13 }}>
-          {mastered ? "practice round, no extra XP" : `${LEVEL_XP_RETRY} XP if you need a retry`}
+          {mastered ? t("cp.practice") : t("cp.retryXp", { xp: LEVEL_XP_RETRY })}
         </span>
       </div>
       {qs.map((q, i) => (

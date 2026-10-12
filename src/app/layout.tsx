@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
-import { Nav } from "@/components/Nav";
+import { Footer, Nav } from "@/components/Nav";
 import { AuthProvider } from "@/components/Auth";
 import "./globals.css";
 
@@ -55,22 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <Nav />
           <main>{children}</main>
-        <footer className="footer">
-          <div className="container">
-            <p style={{ marginBottom: 8 }}>
-              LazyLab is a free, open learning environment. The cluster is simulated: models are analytical and directionally
-              correct, not cycle-accurate.
-            </p>
-            <div className="row" style={{ gap: 18 }}>
-              <span>Built on the shoulders of:</span>
-              <a href="https://prace-ri.eu/wp-content/uploads/Best-Practice-Guide_GPGPU.pdf">PRACE GPGPU guide</a>
-              <a href="https://ttsugriy.github.io/distributed-training-book/">Distributed Training book</a>
-              <a href="https://modal.com/gpu-glossary">Modal GPU Glossary</a>
-              <a href="https://github.com/NVIDIA/grcuda">grCUDA</a>
-              <a href="https://github.com/NVIDIA/open-gpu-kernel-modules">open-gpu-kernel-modules</a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
         </AuthProvider>
       </body>
     </html>

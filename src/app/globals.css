@@ -473,3 +473,5 @@ svg text { font-family: var(--font-sans); }
 }
 .pb-toc .ch { padding: 4px 0; }
 @media (pointer: coarse) { .pb-toc a.sec { padding-top: 7px; padding-bottom: 7px; } }
+.lang-btn { display: grid; place-items: center; min-width: 38px; height: 34px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--border-strong); color: var(--text); text-decoration: none; font: 700 13px var(--font-display); letter-spacing: 0.04em; }
+.lang-btn:hover { background: var(--surface); }

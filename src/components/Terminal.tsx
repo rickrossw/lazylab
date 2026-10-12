@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { Simulation } from "@/sim/sim";
 import { COMMAND_NAMES, prompt, type Line } from "@/sim/shell";
+import { useLang } from "@/i18n/client";
 
 interface TermLine {
   text: string;
@@ -25,6 +26,7 @@ export function Terminal({
   onRan?: () => void;
   onEdit?: (path: string, content: string, readOnly: boolean) => void;
 }) {
+  const { t } = useLang();
   const [lines, setLines] = useState<TermLine[]>(() => welcome.map((text) => ({ text, kind: "info" as const })));
   const [input, setInput] = useState("");
   const [histIdx, setHistIdx] = useState<number | null>(null);
@@ -142,13 +144,13 @@ export function Terminal({
           autoCapitalize="off"
           autoComplete="off"
           autoCorrect="off"
-          aria-label="Terminal command"
+          aria-label={t("term.label")}
         />
       </div>
       {quick && quick.length > 0 && (
         <div className="term-chips">
           {quick.map((q) => (
-            <button key={q} onClick={() => run(q)} title={`Run: ${q}`}>
+            <button key={q} onClick={() => run(q)} title={t("term.run", { cmd: q })}>
               {q}
             </button>
           ))}
@@ -171,6 +173,7 @@ export function EditorModal({
   onSave: (text: string) => void;
   onClose: () => void;
 }) {
+  const { t } = useLang();
   const [text, setText] = useState(content);
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => ref.current?.focus(), []);
@@ -180,18 +183,18 @@ export function EditorModal({
       <div className="modal" role="dialog" aria-label={`Editing ${title}`}>
         <div className="modal-head">
           <strong className="mono">{title}</strong>
-          {readOnly && <span className="chip">read-only</span>}
+          {readOnly && <span className="chip">{t("editor.readOnly")}</span>}
           <span className="spacer" />
           <span className="muted" style={{ fontSize: 12 }}>
-            {readOnly ? "Esc to close" : "Ctrl/⌘+S save · Esc cancel"}
+            {readOnly ? t("editor.escClose") : t("editor.keys")}
           </span>
           {!readOnly && (
             <button className="btn small primary" onClick={() => onSave(text)}>
-              Save
+              {t("editor.save")}
             </button>
           )}
           <button className="btn small" onClick={onClose}>
-            Close
+            {t("editor.close")}
           </button>
         </div>
         <textarea

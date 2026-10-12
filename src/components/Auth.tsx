@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
 import { OAUTH_PROVIDERS, siteUrl, supabase, type OAuthProvider } from "@/lib/supabase";
+import { useLang } from "@/i18n/client";
 import { loadProgress, mergeProgress, normalizeProgress, onProgressChange, saveProgress, type Progress } from "@/lib/progress";
 
 type SyncState = "idle" | "syncing" | "synced" | "error";
@@ -102,6 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 function AuthModal({ mode: initial, onClose }: { mode: "signin" | "recovery"; onClose: () => void }) {
+  const { t } = useLang();
   const [mode, setMode] = useState<"signin" | "signup" | "reset" | "recovery">(initial);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -122,19 +124,19 @@ function AuthModal({ mode: initial, onClose }: { mode: "signin" | "recovery"; on
         const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: siteUrl() } });
         if (error) throw error;
         if (data.session) onClose();
-        else setMsg({ text: "Check your inbox to confirm your email, then sign in. Your guest progress will merge into your account." });
+        else setMsg({ text: t("auth.checkInbox") });
       } else if (mode === "reset") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: siteUrl() });
         if (error) throw error;
-        setMsg({ text: "If that email has an account, a reset link is on its way." });
+        setMsg({ text: t("auth.resetSent") });
       } else {
         const { error } = await supabase.auth.updateUser({ password });
         if (error) throw error;
-        setMsg({ text: "Password updated. You're signed in." });
+        setMsg({ text: t("auth.updated") });
         window.setTimeout(onClose, 1200);
       }
     } catch (err) {
-      setMsg({ text: (err as Error).message || "Something went wrong. Please try again.", bad: true });
+      setMsg({ text: (err as Error).message || t("auth.error"), bad: true });
     } finally {
       setBusy(false);
     }
@@ -146,7 +148,7 @@ function AuthModal({ mode: initial, onClose }: { mode: "signin" | "recovery"; on
     if (error) setMsg({ text: error.message, bad: true });
   };
 
-  const title = { signin: "Sign in", signup: "Create your account", reset: "Reset your password", recovery: "Choose a new password" }[mode];
+  const title = { signin: t("auth.signIn"), signup: t("auth.signUp"), reset: t("auth.reset"), recovery: t("auth.recovery") }[mode];
   return (
     <div className="modal-bg" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="modal auth-modal" role="dialog" aria-label={title}>
@@ -154,34 +156,33 @@ function AuthModal({ mode: initial, onClose }: { mode: "signin" | "recovery"; on
           <div className="row" style={{ marginBottom: 6 }}>
             <h2 style={{ margin: 0, fontSize: "1.6rem" }}>{title}</h2>
             <span className="spacer" />
-            <button className="icon-btn" onClick={onClose} aria-label="Close">✕</button>
+            <button className="icon-btn" onClick={onClose} aria-label={t("auth.close")}>✕</button>
           </div>
           {(mode === "signin" || mode === "signup") && (
             <p className="muted" style={{ fontSize: 14.5 }}>
-              Optional. LazyLab is free to play as a guest, and your progress is saved on this device. Sign in to sync it
-              across devices.
+              {t("auth.optional")}
             </p>
           )}
           {(mode === "signin" || mode === "signup") && OAUTH_PROVIDERS.length > 0 && (
             <div className="stack" style={{ marginBottom: 14 }}>
               {OAUTH_PROVIDERS.map((p) => (
                 <button key={p} className="btn" style={{ width: "100%", justifyContent: "center" }} onClick={() => oauth(p)}>
-                  Continue with {p === "github" ? "GitHub" : "Google"}
+                  {t("auth.continueWith", { p: p === "github" ? "GitHub" : "Google" })}
                 </button>
               ))}
-              <div className="muted" style={{ textAlign: "center", fontSize: 13 }}>or with email</div>
+              <div className="muted" style={{ textAlign: "center", fontSize: 13 }}>{t("auth.orEmail")}</div>
             </div>
           )}
           <form className="auth-form" onSubmit={submit}>
             {mode !== "recovery" && (
               <label>
-                Email
+                {t("auth.email")}
                 <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </label>
             )}
             {mode !== "reset" && (
               <label>
-                Password
+                {t("auth.password")}
                 <input
                   type="password"
                   required
@@ -198,19 +199,19 @@ function AuthModal({ mode: initial, onClose }: { mode: "signin" | "recovery"; on
               </div>
             )}
             <button className="btn primary" type="submit" disabled={busy} style={{ width: "100%", justifyContent: "center" }}>
-              {busy ? "One moment…" : { signin: "Sign in", signup: "Create account", reset: "Send reset link", recovery: "Save password" }[mode]}
+              {busy ? t("auth.wait") : { signin: t("auth.btnSignIn"), signup: t("auth.btnSignUp"), reset: t("auth.btnReset"), recovery: t("auth.btnSave") }[mode]}
             </button>
           </form>
           <div className="row" style={{ marginTop: 14, fontSize: 14 }}>
             {mode === "signin" && (
               <>
-                <button className="linkish" onClick={() => setMode("signup")}>Create an account</button>
+                <button className="linkish" onClick={() => setMode("signup")}>{t("auth.create")}</button>
                 <span className="spacer" />
-                <button className="linkish" onClick={() => setMode("reset")}>Forgot password?</button>
+                <button className="linkish" onClick={() => setMode("reset")}>{t("auth.forgot")}</button>
               </>
             )}
             {(mode === "signup" || mode === "reset") && (
-              <button className="linkish" onClick={() => setMode("signin")}>← Back to sign in</button>
+              <button className="linkish" onClick={() => setMode("signin")}>{t("auth.back")}</button>
             )}
           </div>
         </div>
@@ -220,20 +221,21 @@ function AuthModal({ mode: initial, onClose }: { mode: "signin" | "recovery"; on
 }
 
 export function AccountButton() {
+  const { t } = useLang();
   const { enabled, user, ready, sync, openSignIn, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   if (!enabled || !ready) return null;
   if (!user) {
     return (
       <button className="btn small" onClick={openSignIn}>
-        Sign in
+        {t("auth.signIn")}
       </button>
     );
   }
-  const label = { idle: "", syncing: "Syncing…", synced: "Progress synced", error: "Sync failed, will retry" }[sync];
+  const label = { idle: "", syncing: t("auth.syncing"), synced: t("auth.synced"), error: t("auth.syncError") }[sync];
   return (
     <div style={{ position: "relative" }}>
-      <button className="account-btn" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Account menu">
+      <button className="account-btn" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t("auth.menu")}>
         {(user.email ?? "?")[0].toUpperCase()}
         <span className={`sync-dot ${sync}`} aria-hidden />
       </button>
@@ -242,7 +244,7 @@ export function AccountButton() {
           <div style={{ fontWeight: 600, wordBreak: "break-all" }}>{user.email}</div>
           <div className="muted" style={{ fontSize: 13, margin: "2px 0 10px" }}>{label}</div>
           <button className="btn small" style={{ width: "100%", justifyContent: "center" }} onClick={() => { setOpen(false); signOut(); }}>
-            Sign out
+            {t("auth.signOut")}
           </button>
         </div>
       )}

@@ -22,6 +22,8 @@ LazyLab is an interactive book you can play: **The LazyLab Playbook** teaches ho
 - **Glossary** (`/atlas`): every concept as a standalone reference page.
 - **Terminal**: about 40 commands with realistic output (`sbatch`, `scontrol`, `nvidia-smi`, `dcgmi`, `dmesg`, `ibstat`, `ss`, `systemctl`, `crontab`, `ssh`, `pdsh`, pipes, `sudo`, …).
 
+**Languages**: English at `/`, Spanish at `/es/` (e.g. [lazylab.com/es/](https://lazylab.com/es/)). The EN/ES button in the nav switches the current page and remembers the choice; Spanish-language browsers start in Spanish. Simulated terminal output stays in English, as on real clusters.
+
 Design: visual language inspired by nebius.com; long-form chapter layout inspired by the Ultra-Scale Playbook.
 
 ## Develop
@@ -81,7 +83,8 @@ scripts/
 
 ## Adding content
 
-- **Section**: add an entry to one of `src/content/atlas-*.ts`, place it in a chapter in `TRACK_LEVELS` and write its checkpoint in `CHALLENGES` (`src/content/levels.ts`). Cross-link with `[[slug]]`. Tests fail on broken links, unplaced sections or invalid answers.
+- **Translations**: interface strings live in `src/i18n/ui.ts` (`[English, Spanish]` pairs); Spanish content lives in `src/content/es/`. Tests fail if any section, checkpoint, chapter or mission is missing its Spanish version, or if Spanish answers don't match the English.
+- **Section**: add an entry to one of `src/content/atlas-*.ts` (and its Spanish text in `src/content/es/`), place it in a chapter in `TRACK_LEVELS` and write its checkpoint in `CHALLENGES` (`src/content/levels.ts`). Cross-link with `[[slug]]`. Tests fail on broken links, unplaced sections or invalid answers.
 - **Mission**: add a `TerminalMission` (scenario, objectives, hints, debrief, golden `solution`) to `src/missions/index.ts` and append it to `MISSIONS`. Tests replay the golden solution and fail if the mission can't be won or isn't deterministic.
 
 ## Sources

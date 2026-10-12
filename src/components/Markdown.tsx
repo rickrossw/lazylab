@@ -4,10 +4,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { trackOf } from "@/lib/game";
+import { localize, type Lang } from "@/i18n";
+import { titleResolver } from "@/content/localized";
 
 type Resolve = (slug: string) => string | undefined;
+type Href = (path: string) => string;
 
-function inline(text: string, resolve: Resolve, keyBase: string): ReactNode[] {
+function inline(text: string, resolve: Resolve, keyBase: string, href: Href = (p) => p): ReactNode[] {
   const out: ReactNode[] = [];
   const re = /(`[^`]+`)|(\*\*[^*]+\*\*)|(\*[^*\s][^*]*\*)|(\[\[[^\]]+\]\])|(\[[^\]]+\]\([^)]+\))/g;
   let last = 0;
@@ -18,14 +21,14 @@ function inline(text: string, resolve: Resolve, keyBase: string): ReactNode[] {
     const tok = m[0];
     const key = `${keyBase}-${i++}`;
     if (m[1]) out.push(<code key={key}>{tok.slice(1, -1)}</code>);
-    else if (m[2]) out.push(<strong key={key}>{inline(tok.slice(2, -2), resolve, key)}</strong>);
-    else if (m[3]) out.push(<em key={key}>{inline(tok.slice(1, -1), resolve, key)}</em>);
+    else if (m[2]) out.push(<strong key={key}>{inline(tok.slice(2, -2), resolve, key, href)}</strong>);
+    else if (m[3]) out.push(<em key={key}>{inline(tok.slice(1, -1), resolve, key, href)}</em>);
     else if (m[4]) {
       const [slug, label] = tok.slice(2, -2).split("|");
       const title = resolve(slug.trim());
       out.push(
         title ? (
-          <Link key={key} className="xref" href={trackOf(slug.trim()) ? `/play/${trackOf(slug.trim())}/#${slug.trim()}` : `/atlas/${slug.trim()}/`}>
+          <Link key={key} className="xref" href={href(trackOf(slug.trim()) ? `/play/${trackOf(slug.trim())}/#${slug.trim()}` : `/atlas/${slug.trim()}/`)}>
             {label ?? title}
           </Link>
         ) : (
@@ -41,7 +44,7 @@ function inline(text: string, resolve: Resolve, keyBase: string): ReactNode[] {
             {mm[1]}
           </a>
         ) : (
-          <Link key={key} href={mm[2]}>
+          <Link key={key} href={href(mm[2])}>
             {mm[1]}
           </Link>
         ),
@@ -80,7 +83,9 @@ function splitRow(row: string): string[] {
   return cells;
 }
 
-export function Markdown({ source, resolve = () => undefined }: { source: string; resolve?: Resolve }) {
+export function Markdown({ source, lang = "en" }: { source: string; lang?: Lang }) {
+  const resolve = titleResolver(lang);
+  const href: Href = (p) => localize(lang, p);
   const lines = source.replace(/\r\n/g, "\n").split("\n");
   const blocks: ReactNode[] = [];
   let i = 0;
@@ -103,14 +108,14 @@ export function Markdown({ source, resolve = () => undefined }: { source: string
     const h = /^(#{2,4})\s+(.*)$/.exec(line);
     if (h) {
       const Tag = (`h${h[1].length}` as "h2" | "h3" | "h4");
-      blocks.push(<Tag key={key}>{inline(h[2], resolve, key)}</Tag>);
+      blocks.push(<Tag key={key}>{inline(h[2], resolve, key, href)}</Tag>);
       i++;
       continue;
     }
     if (line.startsWith(">")) {
       const body: string[] = [];
       while (i < lines.length && lines[i].startsWith(">")) body.push(lines[i++].replace(/^>\s?/, ""));
-      blocks.push(<blockquote key={key}>{inline(body.join(" "), resolve, key)}</blockquote>);
+      blocks.push(<blockquote key={key}>{inline(body.join(" "), resolve, key, href)}</blockquote>);
       continue;
     }
     if (line.trim().startsWith("|")) {
@@ -124,11 +129,11 @@ export function Markdown({ source, resolve = () => undefined }: { source: string
       blocks.push(
         <table key={key}>
           <thead>
-            <tr>{head.map((c, j) => <th key={j}>{inline(c, resolve, `${key}h${j}`)}</th>)}</tr>
+            <tr>{head.map((c, j) => <th key={j}>{inline(c, resolve, `${key}h${j}`, href)}</th>)}</tr>
           </thead>
           <tbody>
             {body.map((r, ri) => (
-              <tr key={ri}>{r.map((c, j) => <td key={j}>{inline(c, resolve, `${key}r${ri}c${j}`)}</td>)}</tr>
+              <tr key={ri}>{r.map((c, j) => <td key={j}>{inline(c, resolve, `${key}r${ri}c${j}`, href)}</td>)}</tr>
             ))}
           </tbody>
         </table>,
@@ -150,7 +155,7 @@ export function Markdown({ source, resolve = () => undefined }: { source: string
       blocks.push(
         <Tag key={key}>
           {items.map((it, j) => (
-            <li key={j}>{inline(it, resolve, `${key}-${j}`)}</li>
+            <li key={j}>{inline(it, resolve, `${key}-${j}`, href)}</li>
           ))}
         </Tag>,
       );
@@ -159,7 +164,7 @@ export function Markdown({ source, resolve = () => undefined }: { source: string
     const para: string[] = [];
     if (/^(#{2,4}\s|```|>|\s*[-*]\s|\s*\d+\.\s|\s*\|)/.test(line)) para.push(lines[i++]);
     while (i < lines.length && lines[i].trim() && !/^(#{2,4}\s|```|>|\s*[-*]\s|\s*\d+\.\s|\s*\|)/.test(lines[i])) para.push(lines[i++]);
-    blocks.push(<p key={key}>{inline(para.join(" "), resolve, key)}</p>);
+    blocks.push(<p key={key}>{inline(para.join(" "), resolve, key, href)}</p>);
   }
   return <>{blocks}</>;
 }
