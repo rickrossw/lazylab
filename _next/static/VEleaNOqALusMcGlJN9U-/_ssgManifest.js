@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fatlas\u002F[slug]","\u002Fes\u002Fatlas\u002F[slug]","\u002Fes\u002Fmissions\u002F[id]","\u002Fes\u002Fplay\u002F[track]","\u002Fmissions\u002F[id]","\u002Fplay\u002F[track]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
