@@ -312,3 +312,27 @@ svg text { font-family: var(--font-sans); }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* ---------- small screens & touch ---------- */
+.atlas-layout > *, .console > *, .stack > * { min-width: 0; }
+.control select, .control input { min-width: 0; max-width: 100%; }
+.panel-head { flex-wrap: wrap; row-gap: 6px; }
+.term-scroll { -webkit-overflow-scrolling: touch; }
+@media (pointer: coarse) {
+  .seg button { min-height: 34px; min-width: 36px; padding: 6px 12px; font-size: 13.5px; }
+  .brand { padding: 8px 4px; margin-left: -4px; }
+  .control input[type="range"] { height: 32px; }
+  .btn.small { min-height: 36px; padding: 8px 14px; }
+  .term-chips button { min-height: 32px; padding: 4px 12px; font-size: 13px; }
+  .chip button { min-width: 32px; min-height: 28px; font-size: 16px; }
+  a.muted, .atlas-side a { display: inline-block; padding: 6px 0; }
+  .term-input input { font-size: 16px; } /* prevents iOS zoom-on-focus */
+  .atlas-search { font-size: 16px; }
+}
+@media (max-width: 640px) {
+  .term { height: 380px; font-size: 12px; }
+  .hud { gap: 6px 12px; font-size: 12.5px; }
+  .modal-bg { padding: 8px; align-items: start; }
+  .editor { min-height: 55vh; font-size: 13px; }
+  h1 { font-size: 1.8rem; }
+}
