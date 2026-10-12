@@ -90,7 +90,7 @@ La receta clásica para modelos grandes, el **paralelismo 3D**, combina los tres
 
 **Por qué es tan importante**: los [[tensor-core|tensor cores]] entregan ~15× más FLOP/s en BF16 que en FP32 simple en una H100. Entrenar en FP32 deja casi toda la GPU ociosa.
 
-**Memoria**: pesos y gradientes en 2 bytes, más 12 bytes de estado del optimizador en FP32 (maestro, m y v de Adam), da la regla de "16 bytes por parámetro" que se usa en todo el Playbook.`,
+**Memoria**: pesos y gradientes en 2 bytes, más 12 bytes de estado del optimizador en FP32 (maestro, m y v de Adam), da la regla de "16 bytes por parámetro" que se usa en todo LazyLab.`,
   },
   "activation-checkpointing": {
     title: "Checkpointing de activaciones",

@@ -128,7 +128,7 @@ export function GlossaryEntryView({ lang, slug }: { lang: Lang; slug: string }) 
         {chapter && (
           <p>
             <Link href={L(`/play/${chapter.track}/#${e.slug}`)} className="btn small primary">
-              {t(lang, "glossary.inPlaybook", { n: chapter.n })}
+              {t(lang, "glossary.inChapter", { n: chapter.n })}
             </Link>
           </p>
         )}

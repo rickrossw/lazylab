@@ -3,7 +3,7 @@ import type { Lang } from "./index";
 // Interface strings. Each entry is [English, Spanish]. Use {name} placeholders for values.
 const UI = {
   // nav & chrome
-  "nav.playbook": ["Playbook", "Playbook"],
+  "nav.home.label": ["Home", "Inicio"],
   "nav.lab": ["Lab", "Lab"],
   "nav.missions": ["Missions", "Misiones"],
   "nav.glossary": ["Glossary", "Glosario"],
@@ -17,12 +17,11 @@ const UI = {
   "footer.shoulders": ["Built on the shoulders of:", "Construido sobre el trabajo de:"],
 
   // home
-  "home.eyebrow": ["The LazyLab Playbook", "El Playbook de LazyLab"],
   "home.title1": ["Run GPU clusters", "Opera clústeres de GPU"],
   "home.title2": ["like you built them.", "como si los hubieras construido."],
   "home.lede": [
-    "An interactive book on GPU cluster architecture, operations, optimization, monitoring, performance and security. Read a section, play with the live model, clear the checkpoint, then take on the boss: a broken cluster with a real terminal.",
-    "Un libro interactivo sobre arquitectura, operación, optimización, monitoreo, rendimiento y seguridad de clústeres de GPU. Lee una sección, juega con el modelo en vivo, supera el checkpoint y enfrenta al jefe: un clúster averiado con una terminal real.",
+    "Learn GPU cluster architecture, operations, optimization, monitoring, performance and security by doing. Read a section, play with the live model, clear the checkpoint, then take on the boss: a broken cluster with a real terminal.",
+    "Aprende arquitectura, operación, optimización, monitoreo, rendimiento y seguridad de clústeres de GPU practicando. Lee una sección, juega con el modelo en vivo, supera el checkpoint y enfrenta al jefe: un clúster averiado con una terminal real.",
   ],
   "home.contents": ["Contents", "Contenido"],
   "home.skipToLab": ["Or skip to free play in the Lab →", "O ve directo al juego libre en el Lab →"],
@@ -53,7 +52,7 @@ const UI = {
   "chapter.inShort": ["In short", "En resumen"],
   "chapter.sources": ["Sources", "Fuentes"],
   "chapter.backToContents": ["Back to contents", "Volver al contenido"],
-  "toc.label": ["Playbook contents", "Contenido del Playbook"],
+  "toc.label": ["Chapters", "Capítulos"],
   "toc.boss": ["Boss: {title}", "Jefe: {title}"],
 
   // boss card
@@ -114,7 +113,7 @@ const UI = {
   "done.cost": ["Cost", "Costo"],
   "done.carbon": ["Carbon", "Carbono"],
   "done.deeper": ["Go deeper:", "Profundiza:"],
-  "done.back": ["Back to the Playbook →", "Volver al Playbook →"],
+  "done.back": ["Back to home →", "Volver al inicio →"],
   "done.again": ["Play again", "Jugar de nuevo"],
   "done.design": ["Design", "Diseño"],
   "done.capex": ["Capex", "Capex"],
@@ -219,15 +218,15 @@ const UI = {
   "glossary.eyebrow": ["Reference", "Referencia"],
   "glossary.title": ["Glossary", "Glosario"],
   "glossary.lede": [
-    "Every concept from the Playbook as a standalone reference page, cross-linked and cited.",
-    "Cada concepto del Playbook como página de referencia independiente, con enlaces cruzados y fuentes.",
+    "Every concept from LazyLab as a standalone reference page, cross-linked and cited.",
+    "Cada concepto de LazyLab como página de referencia independiente, con enlaces cruzados y fuentes.",
   ],
   "glossary.search": ["Search {n} concepts — try \"nvlink\", \"xid\", \"zero\"…", "Busca entre {n} conceptos: prueba \"nvlink\", \"xid\", \"zero\"…"],
   "glossary.read": ["{n} of {total} read on this device", "{n} de {total} leídos en este dispositivo"],
   "glossary.nothing": ["Nothing matches “{q}”.", "Nada coincide con “{q}”."],
   "glossary.all": ["← All concepts", "← Todos los conceptos"],
   "glossary.track": ["{name} track", "Ruta {name}"],
-  "glossary.inPlaybook": ["Read in the Playbook: Chapter {n} · checkpoint +50 XP →", "Leer en el Playbook: Capítulo {n} · checkpoint +50 XP →"],
+  "glossary.inChapter": ["Read it in Chapter {n} · checkpoint +50 XP →", "Leerlo en el Capítulo {n} · checkpoint +50 XP →"],
   "glossary.useIt": ["Use it in a mission", "Úsalo en una misión"],
   "glossary.related": ["Related", "Relacionado"],
   "glossary.sources": ["Sources & further reading", "Fuentes y lecturas adicionales"],
@@ -365,7 +364,7 @@ const UI = {
   "404.eyebrow": ["Xid 404", "Xid 404"],
   "404.title": ["This page has fallen off the bus.", "Esta página se cayó del bus."],
   "404.body": ["We couldn't find what you were looking for.", "No encontramos lo que buscabas."],
-  "404.home": ["Back to the Playbook", "Volver al Playbook"],
+  "404.home": ["Back to home", "Volver al inicio"],
 } as const satisfies Record<string, readonly [string, string]>;
 
 export type UIKey = keyof typeof UI;

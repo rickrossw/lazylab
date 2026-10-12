@@ -2,11 +2,11 @@
 
 **Learn GPU clusters by breaking them.** Live at **[lazylab.com](https://lazylab.com/)**.
 
-LazyLab is an interactive book you can play: **The LazyLab Playbook** teaches how to design, run, tune, monitor and secure GPU clusters. Each section mixes explanation, live models and a checkpoint challenge. Each chapter ends in a boss mission: a broken simulated cluster with a real terminal. Everything runs client-side, so hosting is free. Sign-in is optional and only syncs progress.
+LazyLab teaches how to design, run, tune, monitor and secure GPU clusters, and you learn it by playing. Each section mixes explanation, live models and a checkpoint challenge. Each chapter ends in a boss mission: a broken simulated cluster with a real terminal. Everything runs client-side, so hosting is free. Sign-in is optional and only syncs progress.
 
 ## What's inside
 
-- **Playbook** (`/`): six chapters, 44 sections. Every section ends with a checkpoint (multiple choice, real tool output to interpret, or quick calculations) worth XP. Progress gives you a rank (Intern → Distinguished Engineer) and a daily streak.
+- **Home** (`/`): six chapters, 44 sections. Every section ends with a checkpoint (multiple choice, real tool output to interpret, or quick calculations) worth XP. Progress gives you a rank (Intern → Distinguished Engineer) and a daily streak.
 - **Boss missions** (8), unlocked once you master half a chapter's sections:
 
   | Chapter | Boss |

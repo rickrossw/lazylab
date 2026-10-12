@@ -11,7 +11,6 @@ export function HomeView({ lang }: { lang: Lang }) {
       <section className="cover">
         <div className="cover-inner">
           <div>
-            <div className="eyebrow" style={{ marginBottom: 12 }}>{t(lang, "home.eyebrow")}</div>
             <h1>
               {t(lang, "home.title1")}
               <br />

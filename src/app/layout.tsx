@@ -9,9 +9,9 @@ const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", displa
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 const SITE_URL = "https://lazylab.com";
-const TITLE = "The LazyLab Playbook — learn to run GPU clusters";
+const TITLE = "LazyLab — learn to run GPU clusters";
 const DESCRIPTION =
-  "An interactive playbook for GPU cluster architecture, operations, optimization, monitoring, performance and security. Read, play with a live simulated cluster, clear checkpoints and beat the boss missions.";
+  "Learn GPU cluster architecture, operations, optimization, monitoring, performance and security. Read, play with a live simulated cluster, clear checkpoints and beat the boss missions.";
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const metadata: Metadata = {

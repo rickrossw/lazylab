@@ -1,7 +1,7 @@
 {
-  "name": "LazyLab — The GPU Cluster Playbook",
+  "name": "LazyLab — learn to run GPU clusters",
   "short_name": "LazyLab",
-  "description": "Learn to run GPU clusters by playing: an interactive playbook with a simulated cluster.",
+  "description": "Learn to run GPU clusters by playing with a simulated cluster.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#052b42",

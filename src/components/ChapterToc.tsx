@@ -8,7 +8,7 @@ import type { TrackId } from "@/missions";
 import { useLang } from "@/i18n/client";
 import { useProgress } from "./useProgress";
 
-export function PlaybookToc({ current, titles }: { current?: TrackId; titles: Record<string, string> }) {
+export function ChapterToc({ current, titles }: { current?: TrackId; titles: Record<string, string> }) {
   const { lang, t, L } = useLang();
   const p = useProgress();
   const [active, setActive] = useState<string | null>(null);

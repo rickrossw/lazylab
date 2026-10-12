@@ -6,8 +6,8 @@ import { localize, type Lang } from "@/i18n";
 
 const PAGES = {
   home: {
-    en: ["The LazyLab Playbook — learn to run GPU clusters", "An interactive playbook for GPU cluster architecture, operations, optimization, monitoring, performance and security."],
-    es: ["El Playbook de LazyLab — aprende a operar clústeres de GPU", "Un playbook interactivo sobre arquitectura, operación, optimización, monitoreo, rendimiento y seguridad de clústeres de GPU."],
+    en: ["LazyLab — learn to run GPU clusters", "Learn GPU cluster architecture, operations, optimization, monitoring, performance and security by playing with a live simulated cluster."],
+    es: ["LazyLab — aprende a operar clústeres de GPU", "Aprende arquitectura, operación, optimización, monitoreo, rendimiento y seguridad de clústeres de GPU jugando con un clúster simulado en vivo."],
     path: "/",
   },
   lab: {
@@ -21,8 +21,8 @@ const PAGES = {
     path: "/missions/",
   },
   glossary: {
-    en: ["Glossary", "Every GPU cluster concept from the Playbook as a cross-linked reference page."],
-    es: ["Glosario", "Cada concepto de clústeres de GPU del Playbook como página de referencia con enlaces cruzados."],
+    en: ["Glossary", "Every GPU cluster concept from LazyLab as a cross-linked reference page."],
+    es: ["Glosario", "Cada concepto de clústeres de GPU de LazyLab como página de referencia con enlaces cruzados."],
     path: "/atlas/",
   },
 } as const;

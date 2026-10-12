@@ -9,7 +9,7 @@ import { basePathOf, localize, type Lang } from "@/i18n";
 import type { UIKey } from "@/i18n/ui";
 
 const LINKS: { href: string; key: UIKey }[] = [
-  { href: "/", key: "nav.playbook" },
+  { href: "/", key: "nav.home.label" },
   { href: "/lab/", key: "nav.lab" },
   { href: "/missions/", key: "nav.missions" },
   { href: "/atlas/", key: "nav.glossary" },

@@ -9,7 +9,7 @@ import { getMission } from "@/missions";
 import { Markdown } from "@/components/Markdown";
 import { Widget } from "@/components/widgets/Widgets";
 import { Checkpoint } from "@/components/Checkpoint";
-import { PlaybookToc } from "@/components/PlaybookToc";
+import { ChapterToc } from "@/components/ChapterToc";
 import { BossCard } from "@/components/BossCard";
 import { localize, type Lang } from "@/i18n";
 import { t } from "@/i18n/ui";
@@ -25,13 +25,13 @@ export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
   return (
     <div className="pb-layout">
       <aside className="pb-toc">
-        <PlaybookToc current={c.track} titles={titles} />
+        <ChapterToc current={c.track} titles={titles} />
       </aside>
       <article className="pb-article">
         <details className="pb-mobile-toc">
           <summary>{t(lang, "chapter.contents")}</summary>
           <div className="pb-toc">
-            <PlaybookToc current={c.track} titles={titles} />
+            <ChapterToc current={c.track} titles={titles} />
           </div>
         </details>
         <header className="pb-head">

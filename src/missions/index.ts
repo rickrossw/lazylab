@@ -204,7 +204,7 @@ Start with \`sacct\`, the job log (\`cat slurm-101.out\`) and the node's kernel 
   ],
   debrief: `**Xid 79: "GPU has fallen off the bus"** means the driver can no longer reach the GPU over PCIe. Causes include power, thermal or physical connection problems. Software can't fix it: the node needs a reboot at minimum, and often an RMA.
 
-**The playbook you just ran**
+**The procedure you just ran**
 1. *Triage from the scheduler*: \`sacct\` / the job log tells you *which* node.
 2. *Confirm at the source*: \`dmesg\` holds the driver's Xid messages. The open-source NVIDIA kernel modules (open-gpu-kernel-modules) are where these are emitted.
 3. *Contain*: **drain** the node (running jobs finish, new ones avoid it) with a reason the hardware team can read later in \`sinfo -R\`.
