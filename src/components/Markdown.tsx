@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { trackOf } from "@/lib/game";
 
 type Resolve = (slug: string) => string | undefined;
 
@@ -24,7 +25,7 @@ function inline(text: string, resolve: Resolve, keyBase: string): ReactNode[] {
       const title = resolve(slug.trim());
       out.push(
         title ? (
-          <Link key={key} className="xref" href={`/atlas/${slug.trim()}/`}>
+          <Link key={key} className="xref" href={trackOf(slug.trim()) ? `/play/${trackOf(slug.trim())}/#${slug.trim()}` : `/atlas/${slug.trim()}/`}>
             {label ?? title}
           </Link>
         ) : (

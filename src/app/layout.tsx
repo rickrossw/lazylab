@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import { Nav } from "@/components/Nav";
+import { AuthProvider } from "@/components/Auth";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk", display: "swap" });
+const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap", weight: ["600", "700", "800"] });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "LazyLab — learn GPU clusters by breaking them", template: "%s · LazyLab" },
+  title: { default: "The LazyLab Playbook — learn to run GPU clusters", template: "%s · LazyLab" },
   description:
     "An interactive lab for GPU cluster architecture, scheduling, optimization, monitoring, performance and security. Read a concept, poke a live simulated cluster, then prove it in a mission.",
   icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/favicon.svg` },
@@ -19,13 +20,14 @@ const themeScript = `try{var t=localStorage.getItem("lazylab.theme");if(t==="lig
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${grotesk.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${archivo.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <Nav />
-        <main>{children}</main>
+        <AuthProvider>
+          <Nav />
+          <main>{children}</main>
         <footer className="footer">
           <div className="container">
             <p style={{ marginBottom: 8 }}>
@@ -42,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
+        </AuthProvider>
       </body>
     </html>
   );

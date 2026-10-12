@@ -7,6 +7,8 @@ import { MISSIONS, TRACKS } from "@/missions";
 import { Markdown } from "@/components/Markdown";
 import { Widget } from "@/components/widgets/Widgets";
 import { MarkRead, SideReadMarks } from "@/components/AtlasClient";
+import { CHAPTERS } from "@/content/chapters";
+import { trackOf } from "@/lib/game";
 
 export function generateStaticParams() {
   return ATLAS.map((e) => ({ slug: e.slug }));
@@ -24,6 +26,7 @@ export default async function AtlasEntryPage({ params }: { params: Promise<{ slu
   const groups = byCategory();
   const missions = MISSIONS.filter((m) => m.atlas.includes(e.slug));
   const track = TRACKS[e.track];
+  const chapter = CHAPTERS.find((c) => c.track === trackOf(e.slug));
   return (
     <div className="container atlas-layout">
       <aside className="atlas-side" aria-label="Atlas contents">
@@ -50,6 +53,13 @@ export default async function AtlasEntryPage({ params }: { params: Promise<{ slu
           </span>
         </div>
         <h1 style={{ fontSize: "2.3rem" }}>{e.title}</h1>
+        {chapter && (
+          <p>
+            <Link href={`/play/${chapter.track}/#${e.slug}`} className="btn small primary">
+              Read in the Playbook: Chapter {chapter.n} · checkpoint +50 XP →
+            </Link>
+          </p>
+        )}
         <p style={{ fontSize: 19, color: "var(--text-2)" }}>{e.summary}</p>
         <Markdown source={e.body} resolve={atlasTitle} />
         {e.widget && <Widget id={e.widget} />}

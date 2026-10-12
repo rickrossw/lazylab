@@ -2,29 +2,27 @@
 
 **Learn GPU clusters by breaking them.** Live at **[lazylab.com](https://lazylab.com/)**.
 
-LazyLab is a browser game for learning how to design, run, tune, monitor and secure GPU clusters. Open the site and you're dropped straight into a simulated cluster with a terminal, live dashboards and a problem to fix. Everything runs client-side against a deterministic simulator, so hosting is free.
+LazyLab is an interactive book you can play: **The LazyLab Playbook** teaches how to design, run, tune, monitor and secure GPU clusters. Each section mixes explanation, live models and a checkpoint challenge. Each chapter ends in a boss mission: a broken simulated cluster with a real terminal. Everything runs client-side, so hosting is free. Sign-in is optional and only syncs progress.
 
 ## What's inside
 
-- **Play** (`/`): starts at your first unfinished mission. Progress is saved in your browser.
-- **Missions**: eight graded scenarios across six tracks:
+- **Playbook** (`/`): six chapters, 44 sections. Every section ends with a checkpoint (multiple choice, real tool output to interpret, or quick calculations) worth XP. Progress gives you a rank (Intern → Distinguished Engineer) and a daily streak.
+- **Boss missions** (8), unlocked once you master half a chapter's sections:
 
-  | # | Mission | Track |
-  |---|---|---|
-  | 1 | Two Nodes, One Job: fix a broken multi-node Slurm script | Running |
-  | 2 | Fallen Off the Bus: diagnose Xid 79, drain the node, recover | Monitoring |
-  | 3 | The Slow Lane: find a thermally throttled straggler | Monitoring |
-  | 4 | Feed the Beast: raise MFU from 26% to 55%+ | Optimization |
-  | 5 | Watts Up: cut power 20% and keep 85% of throughput | Performance |
-  | 6 | Night Shift: contain a cryptominer on a shared node | Security |
-  | 7 | Seventy Billion Reasons: fit and train a 70B model on 32 GPUs | Optimization |
-  | 8 | Build the Pod: spec a cluster under budget, power and deadline | Architecture |
+  | Chapter | Boss |
+  |---|---|
+  | 1. Anatomy of a GPU Cluster | Build the Pod: spec a cluster under budget, power and deadline |
+  | 2. Running Jobs | Two Nodes, One Job: fix a broken multi-node Slurm script |
+  | 3. Watching the Fleet | Fallen Off the Bus (Xid 79), The Slow Lane (thermal straggler) |
+  | 4. Making Training Fast | Feed the Beast (MFU 26% → 55%), Seventy Billion Reasons (fit 70B) |
+  | 5. Measuring and Scaling | Watts Up: cut power 20%, keep 85% throughput |
+  | 6. Securing Shared GPUs | Night Shift: contain a cryptominer |
 
-- **Lab** (`/lab`): free-play cluster. Choose GPU, node count and network, then inject faults (fan failure, Xid 79, ECC, NVLink, InfiniBand, rogue process).
-- **Atlas** (`/atlas`): 44 cross-linked concept pages with six interactive widgets (roofline, training memory, all-reduce, MIG, scaling, power capping).
-- **Terminal**: about 40 commands with realistic output, including `sinfo`, `squeue`, `sbatch`, `scontrol`, `sacct`, `nvidia-smi`, `dcgmi`, `dmesg`, `ibstat`, `all_reduce_perf`, `ps`, `kill`, `ss`, `systemctl`, `journalctl`, `crontab`, `usermod`, `ssh`, `pdsh`, `nano`, pipes and `sudo`.
+- **Lab** (`/lab`): free-play simulated cluster with fault injection (fan failure, Xid 79, ECC, NVLink, InfiniBand, rogue process).
+- **Glossary** (`/atlas`): every concept as a standalone reference page.
+- **Terminal**: about 40 commands with realistic output (`sbatch`, `scontrol`, `nvidia-smi`, `dcgmi`, `dmesg`, `ibstat`, `ss`, `systemctl`, `crontab`, `ssh`, `pdsh`, pipes, `sudo`, …).
 
-Every run reports energy (kWh), cost and CO₂e alongside performance.
+Design: visual language inspired by nebius.com; long-form chapter layout inspired by the Ultra-Scale Playbook.
 
 ## Develop
 
@@ -36,6 +34,17 @@ npm run build    # static export to ./out
 ```
 
 Requires Node 20+.
+
+## Optional sign-in (Supabase)
+
+Guests can play everything; progress is saved in the browser. Signing in syncs progress across devices (and later, the mobile app). It stays hidden until configured.
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. In **SQL Editor**, run `supabase/migrations/0001_progress.sql`. It creates the `progress` table with row-level security.
+3. In **Authentication → URL Configuration**, set **Site URL** to `https://lazylab.com/` and add `https://lazylab.com/**` and `http://localhost:3000/**` to **Redirect URLs**.
+4. Optional: enable GitHub or Google under **Authentication → Providers**.
+5. Copy `.env.example` to `.env.local` and fill in the project URL and anon key from **Project Settings → API**.
+6. Run `npm run deploy`.
 
 ## Deploy
 
@@ -58,8 +67,9 @@ src/
     shell.ts     simulated command line
     jobscript.ts #SBATCH and train.py argument parser
     designer.ts  capex / power / time-to-train estimator
-  missions/    mission catalog and golden-solution tests
-  content/     Atlas entries and sources
+  missions/    boss mission catalog and golden-solution tests
+  content/     chapters, sections (Atlas entries), checkpoints, sources
+  lib/         progress (XP, streaks, merge), game rules, Supabase client
   components/  React UI: console, terminal, topology, charts, widgets
   app/         Next.js routes (static export)
 scripts/
@@ -71,7 +81,7 @@ scripts/
 
 ## Adding content
 
-- **Atlas entry**: add an object to one of `src/content/atlas-*.ts`. Cross-link with `[[slug]]` or `[[slug|label]]`. Tests fail on broken links or unknown sources.
+- **Section**: add an entry to one of `src/content/atlas-*.ts`, place it in a chapter in `TRACK_LEVELS` and write its checkpoint in `CHALLENGES` (`src/content/levels.ts`). Cross-link with `[[slug]]`. Tests fail on broken links, unplaced sections or invalid answers.
 - **Mission**: add a `TerminalMission` (scenario, objectives, hints, debrief, golden `solution`) to `src/missions/index.ts` and append it to `MISSIONS`. Tests replay the golden solution and fail if the mission can't be won or isn't deterministic.
 
 ## Sources

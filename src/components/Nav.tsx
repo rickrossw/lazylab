@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AccountButton } from "./Auth";
 
 const LINKS = [
-  { href: "/", label: "Play" },
-  { href: "/atlas/", label: "Atlas" },
+  { href: "/", label: "Playbook" },
   { href: "/lab/", label: "Lab" },
   { href: "/missions/", label: "Missions" },
+  { href: "/atlas/", label: "Glossary" },
 ];
 
 export function Nav() {
@@ -33,13 +34,7 @@ export function Nav() {
     <header className="nav">
       <div className="container nav-inner">
         <Link href="/" className="brand" aria-label="LazyLab home">
-          <span className="brand-mark" aria-hidden>
-            <span />
-            <span />
-            <span />
-            <span />
-          </span>
-          <span className="brand-text">LazyLab</span>
+          LazyLab
         </Link>
         <nav className="nav-links">
           {LINKS.map((l) => (
@@ -49,6 +44,7 @@ export function Nav() {
           ))}
         </nav>
         <span className="spacer" />
+        <AccountButton />
         <button className="icon-btn" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title="Toggle theme">
           {theme === "dark" ? "☀" : "☾"}
         </button>

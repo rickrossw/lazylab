@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MISSIONS, TRACKS, createMissionSim, getMission, scoreRun, type DesignerMission, type Mission, type TerminalMission } from "@/missions";
+import { TRACKS, createMissionSim, getMission, scoreRun, type DesignerMission, type Mission, type TerminalMission } from "@/missions";
 import { evaluateDesign, type Design } from "@/sim/designer";
 import { FABRICS, GPUS, type FabricId, type GpuModelId } from "@/sim/hardware";
 import { atlasTitle } from "@/content/atlas";
-import { recordMission } from "@/lib/progress";
+import { missionXp, recordMission } from "@/lib/progress";
+import { bossTrack, trackOf } from "@/lib/game";
+import { CHAPTERS } from "@/content/chapters";
 import { Console } from "./Console";
 import { Markdown } from "./Markdown";
 import { Difficulty } from "./MissionCards";
@@ -23,7 +25,7 @@ function Header({ m }: { m: Mission }) {
   return (
     <div style={{ marginBottom: 14 }}>
       <div className="row" style={{ marginBottom: 4 }}>
-        <Link href="/missions/" className="muted" style={{ fontSize: 14 }}>← Missions</Link>
+        <Link href={bossTrack(m.id) ? `/play/${bossTrack(m.id)}/#boss` : "/missions/"} className="muted" style={{ fontSize: 14 }}>← Back to the chapter</Link>
         <span className="chip">
           <span className="dot" style={{ background: t.color }} />
           {t.name}
@@ -89,13 +91,13 @@ function ObjectivesPanel({ items, hints, hintsUsed, onHint }: { items: { text: s
 }
 
 function Complete({ m, result, onReplay }: { m: Mission; result: Result; onReplay: () => void }) {
-  const idx = MISSIONS.findIndex((x) => x.id === m.id);
-  const next = MISSIONS[idx + 1];
+  const track = bossTrack(m.id);
+  const chapter = CHAPTERS.find((c) => c.track === track);
   return (
     <div className="modal-bg">
       <div className="modal" role="dialog" aria-label="Mission complete">
         <div className="panel-body" style={{ padding: 22 }}>
-          <div className="eyebrow">Mission complete</div>
+          <div className="eyebrow">Boss cleared · +{missionXp(result.score)} XP</div>
           <div className="row" style={{ alignItems: "baseline" }}>
             <h2 style={{ margin: 0 }}>{m.title}</h2>
             <span className="spacer" />
@@ -122,17 +124,13 @@ function Complete({ m, result, onReplay }: { m: Mission; result: Result; onRepla
           <div className="row" style={{ margin: "10px 0 16px" }}>
             <span className="muted" style={{ fontSize: 13 }}>Go deeper:</span>
             {m.atlas.map((a) => (
-              <Link key={a} href={`/atlas/${a}/`} className="chip" style={{ textDecoration: "none" }}>{atlasTitle(a)}</Link>
+              <Link key={a} href={track ? `/play/${trackOf(a) ?? track}/#${a}` : `/atlas/${a}/`} className="chip" style={{ textDecoration: "none" }}>{atlasTitle(a)}</Link>
             ))}
           </div>
           <div className="row">
-            {next ? (
-              <Link href={`/missions/${next.id}/`} className="btn primary">Next: {next.title} →</Link>
-            ) : (
-              <Link href="/lab/" className="btn primary">Free play in the Lab →</Link>
-            )}
+            <Link href="/" className="btn primary">Back to the Playbook →</Link>
+            {chapter && <Link href={`/play/${chapter.track}/`} className="btn">Chapter {chapter.n}</Link>}
             <button className="btn" onClick={onReplay}>Play again</button>
-            <Link href="/missions/" className="btn">All missions</Link>
           </div>
         </div>
       </div>
