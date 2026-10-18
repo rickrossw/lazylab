@@ -483,3 +483,6 @@ svg text { font-family: var(--font-sans); }
 .lang-menu select:focus { outline: none; }
 .lang-menu:focus-within { outline: 2px solid var(--violet); outline-offset: 2px; }
 @media (max-width: 640px) { .lang-menu select { max-width: 92px; } }
+/* Long words in some languages (e.g. Russian, German) must wrap instead of widening the page. */
+h1, h2, h3, .chapter-card h3, .player .rank, .btn, .nav-links a { overflow-wrap: anywhere; hyphens: auto; }
+@media (max-width: 640px) { .nav-links { flex-wrap: wrap; justify-content: flex-start; gap: 2px 4px; } .btn.lime { white-space: normal; text-align: center; } }
