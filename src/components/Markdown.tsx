@@ -1,10 +1,12 @@
+"use client";
+
 // Tiny Markdown renderer for our own content: headings, paragraphs, lists, code, quotes, tables,
 // inline code/bold/italic, links and [[atlas-slug]] / [[slug|label]] cross-references.
 
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { trackOf } from "@/lib/game";
-import { localize, type Lang } from "@/i18n";
+import { useLang } from "@/i18n/client";
 import { titleResolver } from "@/content/localized";
 
 type Resolve = (slug: string) => string | undefined;
@@ -83,9 +85,10 @@ function splitRow(row: string): string[] {
   return cells;
 }
 
-export function Markdown({ source, lang = "en" }: { source: string; lang?: Lang }) {
-  const resolve = titleResolver(lang);
-  const href: Href = (p) => localize(lang, p);
+export function Markdown({ source }: { source: string }) {
+  const { d } = useLang();
+  const resolve = titleResolver(d);
+  const href: Href = (p) => p;
   const lines = source.replace(/\r\n/g, "\n").split("\n");
   const blocks: ReactNode[] = [];
   let i = 0;

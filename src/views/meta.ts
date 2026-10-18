@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getChapter } from "@/content/chapters";
 import { chapterText, entryText, missionText } from "@/content/localized";
 import { getMission } from "@/missions";
-import { localize, type Lang } from "@/i18n";
+type Lang = "en" | "es";
 
 const PAGES = {
   home: {
@@ -31,8 +31,8 @@ function withAlternates(lang: Lang, path: string, title: string, description: st
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: localize(lang, path), languages: { en: path, es: localize("es", path) } },
-    openGraph: { title, description, url: localize(lang, path), locale: lang === "es" ? "es_ES" : "en_US", images: ["/og.png"] },
+    alternates: { canonical: path },
+    openGraph: { title, description, url: path, images: ["/og.png"] },
   };
 }
 
@@ -45,18 +45,18 @@ export function meta(lang: Lang, page: keyof typeof PAGES): Metadata {
 export function chapterMeta(lang: Lang, track: string): Metadata {
   const c = getChapter(track);
   if (!c) return {};
-  const tx = chapterText(c, lang);
+  const tx = chapterText(c, null);
   return withAlternates(lang, `/play/${track}/`, `${tx.n}. ${tx.title}`, tx.kicker);
 }
 
 export function missionMeta(lang: Lang, id: string): Metadata {
   const m = getMission(id);
   if (!m) return {};
-  const tx = missionText(m, lang);
+  const tx = missionText(m, null);
   return withAlternates(lang, `/missions/${id}/`, tx.title, tx.tagline);
 }
 
 export function entryMeta(lang: Lang, slug: string): Metadata {
-  const tx = entryText(slug, lang);
+  const tx = entryText(slug, null);
   return tx ? withAlternates(lang, `/atlas/${slug}/`, tx.title, tx.summary) : {};
 }

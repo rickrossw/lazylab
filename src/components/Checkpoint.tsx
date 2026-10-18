@@ -10,7 +10,7 @@ import { useProgress } from "./useProgress";
 type State = { picked?: number; typed?: string; ok?: boolean };
 
 function QuestionView({ q, state, onAnswer }: { q: Question; state: State; onAnswer: (s: State) => void }) {
-  const { t } = useLang();
+  const { t, d } = useLang();
   const [typed, setTyped] = useState("");
   const answered = state.ok !== undefined;
   return (
@@ -55,8 +55,8 @@ function QuestionView({ q, state, onAnswer }: { q: Question; state: State; onAns
 
 /** End-of-section challenge. Answering everything correctly masters the level and awards XP. */
 export function Checkpoint({ slug }: { slug: string }) {
-  const { lang, t } = useLang();
-  const qs = challengesL(slug, lang);
+  const { lang, t, d } = useLang();
+  const qs = challengesL(slug, d);
   const p = useProgress();
   const mastered = p.levels[slug];
   const [states, setStates] = useState<State[]>(() => qs.map(() => ({})));

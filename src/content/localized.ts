@@ -1,39 +1,50 @@
-// Language-aware accessors for all learning content. English is the source of truth; Spanish
-// overrides the human-readable text and keeps every id, link, answer and number identical.
+// Language-aware accessors for all text. `d` is the loaded translation dictionary for the current
+// language (null for English); every lookup falls back to the English source, so a missing string
+// never breaks a page.
 
-import type { Lang } from "@/i18n";
 import { MISSIONS, TRACKS, type Mission, type TrackId } from "@/missions";
-import { getEntry } from "./atlas";
+import { getEntry, type AtlasCategory } from "./atlas";
 import { CHAPTERS, type Chapter } from "./chapters";
 import { CHALLENGES, type Question } from "./levels";
-import { ATLAS_ES, CHALLENGES_ES, CHAPTERS_ES, MISSIONS_ES, TRACKS_ES } from "./es";
 
-export function entryText(slug: string, lang: Lang): { title: string; summary: string; body: string } | undefined {
+export type Dict = Record<string, string> | null;
+
+const pick = (d: Dict, key: string, fallback: string) => (d && d[key]) || fallback;
+
+export function entryText(slug: string, d: Dict): { title: string; summary: string; body: string } | undefined {
   const e = getEntry(slug);
   if (!e) return undefined;
-  const es = lang === "es" ? ATLAS_ES[slug] : undefined;
-  return es ?? { title: e.title, summary: e.summary, body: e.body };
+  return {
+    title: pick(d, `atlas.${slug}.title`, e.title),
+    summary: pick(d, `atlas.${slug}.summary`, e.summary),
+    body: pick(d, `atlas.${slug}.body`, e.body),
+  };
 }
 
-export function titleResolver(lang: Lang) {
-  return (slug: string) => entryText(slug, lang)?.title;
+export function titleResolver(d: Dict) {
+  return (slug: string) => entryText(slug, d)?.title;
 }
 
-export function chapterText(c: Chapter, lang: Lang): Chapter {
-  return lang === "es" ? { ...c, ...CHAPTERS_ES[c.track] } : c;
+export function chapterText(c: Chapter, d: Dict): Chapter {
+  return { ...c, title: pick(d, `chapter.${c.track}.title`, c.title), kicker: pick(d, `chapter.${c.track}.kicker`, c.kicker), intro: pick(d, `chapter.${c.track}.intro`, c.intro) };
 }
 
-export function chaptersL(lang: Lang): Chapter[] {
-  return CHAPTERS.map((c) => chapterText(c, lang));
+export function chaptersL(d: Dict): Chapter[] {
+  return CHAPTERS.map((c) => chapterText(c, d));
 }
 
-export function trackText(id: TrackId, lang: Lang): { name: string; blurb: string; color: string } {
+export function trackText(id: TrackId, d: Dict): { name: string; blurb: string; color: string } {
   const t = TRACKS[id];
-  return lang === "es" ? { ...t, ...TRACKS_ES[id] } : t;
+  return { ...t, name: pick(d, `track.${id}.name`, t.name), blurb: pick(d, `track.${id}.blurb`, t.blurb) };
 }
 
-export function challengesL(slug: string, lang: Lang): Question[] {
-  return (lang === "es" ? CHALLENGES_ES[slug] : undefined) ?? CHALLENGES[slug] ?? [];
+export function challengesL(slug: string, d: Dict): Question[] {
+  return (CHALLENGES[slug] ?? []).map((q, i): Question => {
+    const k = `cp.${slug}.${i}`;
+    const base = { prompt: pick(d, `${k}.prompt`, q.prompt), explain: pick(d, `${k}.explain`, q.explain) };
+    if (q.kind === "choice") return { ...q, ...base, options: q.options.map((o, j) => pick(d, `${k}.opt.${j}`, o)) };
+    return { ...q, ...base, unit: q.unit ? pick(d, `${k}.unit`, q.unit) : undefined };
+  });
 }
 
 export interface MissionCopy {
@@ -45,13 +56,27 @@ export interface MissionCopy {
   debrief: string;
 }
 
-export function missionText(m: Mission, lang: Lang): MissionCopy {
-  const es = lang === "es" ? MISSIONS_ES[m.id] : undefined;
-  if (es) return es;
-  return { title: m.title, tagline: m.tagline, briefing: m.briefing, objectives: m.objectives.map((o) => o.text), hints: m.hints, debrief: m.debrief };
+export function missionText(m: Mission, d: Dict): MissionCopy {
+  const k = `mission.${m.id}`;
+  return {
+    title: pick(d, `${k}.title`, m.title),
+    tagline: pick(d, `${k}.tagline`, m.tagline),
+    briefing: pick(d, `${k}.briefing`, m.briefing),
+    debrief: pick(d, `${k}.debrief`, m.debrief),
+    objectives: m.objectives.map((o, i) => pick(d, `${k}.objective.${i}`, o.text)),
+    hints: m.hints.map((h, i) => pick(d, `${k}.hint.${i}`, h)),
+  };
 }
 
-export function missionTitle(id: string, lang: Lang): string {
+export function missionTitle(id: string, d: Dict): string {
   const m = MISSIONS.find((x) => x.id === id);
-  return m ? missionText(m, lang).title : id;
+  return m ? missionText(m, d).title : id;
+}
+
+export function categoryText(c: AtlasCategory, d: Dict): string {
+  return pick(d, `category.${c}`, c);
+}
+
+export function rankText(title: string, d: Dict): string {
+  return pick(d, `rank.${title}`, title);
 }

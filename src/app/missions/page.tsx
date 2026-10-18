@@ -5,5 +5,5 @@ import { meta } from "@/views/meta";
 export const metadata: Metadata = meta("en", "missions");
 
 export default function Page() {
-  return <MissionsView lang="en" />;
+  return <MissionsView />;
 }

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AccountButton } from "./Auth";
-import { useLang } from "@/i18n/client";
-import { basePathOf, localize, type Lang } from "@/i18n";
+import { useLang, useLangState } from "@/i18n/client";
+import { LANGUAGES } from "@/i18n/languages";
 import type { UIKey } from "@/i18n/ui";
 
 const LINKS: { href: string; key: UIKey }[] = [
@@ -15,42 +15,39 @@ const LINKS: { href: string; key: UIKey }[] = [
   { href: "/atlas/", key: "nav.glossary" },
 ];
 
-const LANG_KEY = "lazylab.lang";
-
-function savedLang(): Lang | null {
-  try {
-    const v = localStorage.getItem(LANG_KEY);
-    return v === "en" || v === "es" ? v : null;
-  } catch {
-    return null;
-  }
+function LanguageMenu() {
+  const { choice, setChoice } = useLangState();
+  const { t } = useLang();
+  return (
+    <label className="lang-menu" title={t("nav.lang")}>
+      <span aria-hidden className="globe">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18" />
+        </svg>
+      </span>
+      <span className="sr-only">{t("nav.lang")}</span>
+      <select value={choice} onChange={(e) => setChoice(e.target.value)} aria-label={t("nav.lang")}>
+        <option value="auto">{t("nav.auto")}</option>
+        {LANGUAGES.map((l) => (
+          <option key={l.code} value={l.code} lang={l.code}>
+            {l.name}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
 }
 
 export function Nav() {
   const path = usePathname() ?? "/";
-  const router = useRouter();
-  const { lang, t, L } = useLang();
-  const plain = basePathOf(path);
+  const { t } = useLang();
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
 
   useEffect(() => {
     const th = document.documentElement.dataset.theme;
     setTheme(th === "light" || th === "dark" ? th : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   }, []);
-
-  // Keep <html lang> in sync, and send visitors to their language: a saved choice wins,
-  // otherwise a Spanish-language browser starts in Spanish.
-  useEffect(() => {
-    document.documentElement.lang = lang;
-    let pref = savedLang();
-    if (!pref && navigator.language?.toLowerCase().startsWith("es")) {
-      pref = "es";
-      try {
-        localStorage.setItem(LANG_KEY, pref);
-      } catch {}
-    }
-    if (pref === "es" && lang === "en") router.replace(localize("es", plain) + window.location.hash);
-  }, [lang, plain, router]);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -61,33 +58,22 @@ export function Nav() {
     setTheme(next);
   };
 
-  const other: Lang = lang === "en" ? "es" : "en";
-  const switchLang = (e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
-      localStorage.setItem(LANG_KEY, other);
-    } catch {}
-    router.push(localize(other, plain) + window.location.hash);
-  };
-
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <Link href={L("/")} className="brand" aria-label={t("nav.home")}>
+        <Link href="/" className="brand" aria-label={t("nav.home")}>
           LazyLab
         </Link>
         <nav className="nav-links">
           {LINKS.map((l) => (
-            <Link key={l.href} href={L(l.href)} className={(l.href === "/" ? plain === "/" || plain.startsWith("/play") : plain.startsWith(l.href.replace(/\/$/, ""))) ? "active" : ""}>
+            <Link key={l.href} href={l.href} className={(l.href === "/" ? path === "/" || path.startsWith("/play") : path.startsWith(l.href.replace(/\/$/, ""))) ? "active" : ""}>
               {t(l.key)}
             </Link>
           ))}
         </nav>
         <span className="spacer" />
         <AccountButton />
-        <a href={localize(other, plain)} className="lang-btn" onClick={switchLang} aria-label={t("nav.lang")} title={t("nav.lang")} hrefLang={other} lang={other}>
-          {other.toUpperCase()}
-        </a>
+        <LanguageMenu />
         <button className="icon-btn" onClick={toggleTheme} aria-label={t("nav.theme")} title={t("nav.theme")}>
           {theme === "dark" ? "☀" : "☾"}
         </button>
@@ -97,10 +83,11 @@ export function Nav() {
 }
 
 export function Footer() {
-  const { t } = useLang();
+  const { t, machine } = useLang();
   return (
     <footer className="footer">
       <div className="container">
+        {machine && <p style={{ marginBottom: 8, color: "var(--text-2)" }}>{t("mt.notice")}</p>}
         <p style={{ marginBottom: 8 }}>{t("footer.about")}</p>
         <div className="row" style={{ gap: 18 }}>
           <span>{t("footer.shoulders")}</span>

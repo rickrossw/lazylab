@@ -7,11 +7,11 @@ import { useLang } from "@/i18n/client";
 import { useProgress } from "./useProgress";
 
 export function ChapterCards() {
-  const { lang, t, L } = useLang();
+  const { lang, t, L, d } = useLang();
   const p = useProgress();
   return (
     <div className="chapter-grid">
-      {chaptersL(lang).map((c) => {
+      {chaptersL(d).map((c) => {
         const levels = TRACK_LEVELS[c.track];
         const bosses = TRACK_BOSSES[c.track].length;
         const done = levels.filter((s) => p.levels[s]).length;

@@ -1,19 +1,9 @@
-// Locale routing: English lives at the root, Spanish under /es/.
+// Language plumbing. The site lives at one set of URLs; the chosen language is applied in place.
 
-export type Lang = "en" | "es";
-export const LANGS: Lang[] = ["en", "es"];
+/** A language code from LANGUAGES (e.g. "en", "es", "pt-BR"). */
+export type Lang = string;
 
-export function langFromPath(path: string | null | undefined): Lang {
-  return path && /^\/es(\/|$)/.test(path) ? "es" : "en";
-}
-
-/** Strips the /es prefix from a path. */
-export function basePathOf(path: string): string {
-  return path.replace(/^\/es(?=\/|$)/, "") || "/";
-}
-
-/** Returns `path` (an English-site path like "/play/running/") in the given language. */
-export function localize(lang: Lang, path: string): string {
-  if (lang === "en" || !path.startsWith("/")) return path;
-  return path === "/" ? "/es/" : `/es${path}`;
+/** Kept for links: paths are the same in every language. */
+export function localize(_lang: Lang, path: string): string {
+  return path;
 }

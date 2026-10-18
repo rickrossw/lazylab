@@ -5,5 +5,5 @@ import { meta } from "@/views/meta";
 export const metadata: Metadata = meta("en", "glossary");
 
 export default function Page() {
-  return <GlossaryView lang="en" />;
+  return <GlossaryView />;
 }

@@ -9,7 +9,12 @@ const UI = {
   "nav.glossary": ["Glossary", "Glosario"],
   "nav.home": ["LazyLab home", "Inicio de LazyLab"],
   "nav.theme": ["Toggle light or dark theme", "Cambiar tema claro u oscuro"],
-  "nav.lang": ["Leer en español", "Read in English"],
+  "nav.lang": ["Language", "Idioma"],
+  "nav.auto": ["Automatic", "Automático"],
+  "mt.notice": [
+    "This page was translated automatically with open-source models. Technical terms stay in English.",
+    "Esta página se tradujo automáticamente con modelos de código abierto. Los términos técnicos quedan en inglés.",
+  ],
   "footer.about": [
     "LazyLab is a free, open learning environment. The cluster is simulated: models are analytical and directionally correct, not cycle-accurate.",
     "LazyLab es un entorno de aprendizaje gratuito y abierto. El clúster es simulado: los modelos son analíticos y correctos en la dirección, no exactos ciclo a ciclo.",
@@ -20,7 +25,7 @@ const UI = {
   "home.title1": ["Run GPU clusters", "Opera clústeres de GPU"],
   "home.title2": ["like you built them.", "como si los hubieras construido."],
   "home.lede": [
-    "Learn GPU cluster architecture, operations, optimization, monitoring, performance and security by doing. Read a section, play with the live model, clear the checkpoint, then take on the boss: a broken cluster with a real terminal.",
+    "Learn GPU cluster architecture, operations, optimization, monitoring, performance and security by doing. Read a section, play with the live model, pass the checkpoint, then take on the boss: a broken cluster with a real terminal.",
     "Aprende arquitectura, operación, optimización, monitoreo, rendimiento y seguridad de clústeres de GPU practicando. Lee una sección, juega con el modelo en vivo, supera el checkpoint y enfrenta al jefe: un clúster averiado con una terminal real.",
   ],
   "home.contents": ["Contents", "Contenido"],
@@ -369,7 +374,7 @@ const UI = {
 
 export type UIKey = keyof typeof UI;
 
-export function t(lang: Lang, key: UIKey, vars?: Record<string, string | number>): string {
+export function t(lang: "en" | "es", key: UIKey, vars?: Record<string, string | number>): string {
   let s: string = UI[key][lang === "es" ? 1 : 0];
   if (vars) for (const [k, v] of Object.entries(vars)) s = s.split(`{${k}}`).join(String(v));
   return s;

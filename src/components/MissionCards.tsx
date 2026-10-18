@@ -9,7 +9,7 @@ import { useLang } from "@/i18n/client";
 import { loadProgress, type Progress } from "@/lib/progress";
 
 export function Difficulty({ level }: { level: number }) {
-  const { t } = useLang();
+  const { t, d } = useLang();
   return (
     <span className="diff" title={t("missions.difficulty", { n: level })} aria-label={t("missions.difficulty", { n: level })}>
       {[1, 2, 3].map((i) => (
@@ -22,15 +22,15 @@ export function Difficulty({ level }: { level: number }) {
 export type MissionSummary = Pick<Mission, "id" | "title" | "track" | "difficulty" | "tagline" | "kind">;
 
 export function MissionCards({ missions }: { missions: MissionSummary[] }) {
-  const { lang, t, L } = useLang();
+  const { lang, t, L, d } = useLang();
   const [p, setP] = useState<Progress | null>(null);
   useEffect(() => setP(loadProgress()), []);
   return (
     <div className="grid grid-2">
       {missions.map((m, i) => {
         const done = p?.missions[m.id];
-        const tr = trackText(m.track, lang);
-        const copy = missionText(getMission(m.id)!, lang);
+        const tr = trackText(m.track, d);
+        const copy = missionText(getMission(m.id)!, d);
         return (
           <Link key={m.id} href={L(`/missions/${m.id}/`)} className="card card-link track-card" style={{ ["--track" as string]: tr.color }}>
             <div className="row" style={{ marginBottom: 6 }}>

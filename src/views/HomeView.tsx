@@ -1,22 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import { ChapterCards } from "@/components/ChapterCards";
 import { DotField } from "@/components/DotField";
 import { PlayerCard } from "@/components/PlayerCard";
-import { localize, type Lang } from "@/i18n";
-import { t } from "@/i18n/ui";
+import { useLang } from "@/i18n/client";
 
-export function HomeView({ lang }: { lang: Lang }) {
+export function HomeView() {
+  const { t } = useLang();
   return (
     <>
       <section className="cover">
         <div className="cover-inner">
           <div>
             <h1>
-              {t(lang, "home.title1")}
+              {t("home.title1")}
               <br />
-              <span className="lime">{t(lang, "home.title2")}</span>
+              <span className="lime">{t("home.title2")}</span>
             </h1>
-            <p>{t(lang, "home.lede")}</p>
+            <p>{t("home.lede")}</p>
             <DotField />
           </div>
           <PlayerCard />
@@ -24,9 +26,9 @@ export function HomeView({ lang }: { lang: Lang }) {
       </section>
       <section className="chapters">
         <div className="row" style={{ alignItems: "baseline", marginBottom: 14 }}>
-          <h2 style={{ margin: 0 }}>{t(lang, "home.contents")}</h2>
+          <h2 style={{ margin: 0 }}>{t("home.contents")}</h2>
           <span className="spacer" />
-          <Link href={localize(lang, "/lab/")} className="muted">{t(lang, "home.skipToLab")}</Link>
+          <Link href="/lab/" className="muted">{t("home.skipToLab")}</Link>
         </div>
         <ChapterCards />
       </section>

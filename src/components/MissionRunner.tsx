@@ -22,8 +22,8 @@ interface Result {
 }
 
 function Header({ m, copy }: { m: Mission; copy: MissionCopy }) {
-  const { lang, t, L } = useLang();
-  const tr = trackText(m.track, lang);
+  const { lang, t, L, d } = useLang();
+  const tr = trackText(m.track, d);
   const track = bossTrack(m.id);
   return (
     <div style={{ marginBottom: 14 }}>
@@ -44,7 +44,7 @@ function Header({ m, copy }: { m: Mission; copy: MissionCopy }) {
 }
 
 function Briefing({ copy }: { copy: MissionCopy }) {
-  const { lang, t } = useLang();
+  const { lang, t, d } = useLang();
   return (
     <details open className="panel" style={{ marginBottom: 14 }}>
       <summary className="panel-head" style={{ cursor: "pointer" }}>
@@ -52,14 +52,14 @@ function Briefing({ copy }: { copy: MissionCopy }) {
         <span className="muted">{t("runner.collapse")}</span>
       </summary>
       <div className="panel-body prose" style={{ maxWidth: "none" }}>
-        <Markdown source={copy.briefing} lang={lang} />
+        <Markdown source={copy.briefing} />
       </div>
     </details>
   );
 }
 
 function ObjectivesPanel({ items, hints, hintsUsed, onHint }: { items: { text: string; ok: boolean }[]; hints: string[]; hintsUsed: number; onHint: () => void }) {
-  const { lang, t } = useLang();
+  const { lang, t, d } = useLang();
   return (
     <div className="panel">
       <div className="panel-head">
@@ -82,7 +82,7 @@ function ObjectivesPanel({ items, hints, hintsUsed, onHint }: { items: { text: s
           {hints.slice(0, hintsUsed).map((h, i) => (
             <div key={i} className="prose" style={{ fontSize: 14, marginBottom: 8 }}>
               <span className="eyebrow">{t("runner.hint", { n: i + 1 })}</span>
-              <Markdown source={h} lang={lang} />
+              <Markdown source={h} />
             </div>
           ))}
           <button className="btn small" onClick={onHint} disabled={hintsUsed >= hints.length}>
@@ -96,10 +96,10 @@ function ObjectivesPanel({ items, hints, hintsUsed, onHint }: { items: { text: s
 }
 
 function Complete({ m, copy, result, onReplay }: { m: Mission; copy: MissionCopy; result: Result; onReplay: () => void }) {
-  const { lang, t, L } = useLang();
+  const { lang, t, L, d } = useLang();
   const track = bossTrack(m.id);
   const base = CHAPTERS.find((c) => c.track === track);
-  const chapter = base ? chapterText(base, lang) : undefined;
+  const chapter = base ? chapterText(base, d) : undefined;
   return (
     <div className="modal-bg">
       <div className="modal" role="dialog" aria-label={copy.title}>
@@ -126,13 +126,13 @@ function Complete({ m, copy, result, onReplay }: { m: Mission; copy: MissionCopy
             ))}
           </div>
           <div className="prose" style={{ maxWidth: "none" }}>
-            <Markdown source={copy.debrief} lang={lang} />
+            <Markdown source={copy.debrief} />
           </div>
           <div className="row" style={{ margin: "10px 0 16px" }}>
             <span className="muted" style={{ fontSize: 13 }}>{t("done.deeper")}</span>
             {m.atlas.map((a) => (
               <Link key={a} href={L(trackOf(a) ? `/play/${trackOf(a)}/#${a}` : `/atlas/${a}/`)} className="chip" style={{ textDecoration: "none" }}>
-                {entryText(a, lang)?.title}
+                {entryText(a, d)?.title}
               </Link>
             ))}
           </div>
@@ -148,8 +148,8 @@ function Complete({ m, copy, result, onReplay }: { m: Mission; copy: MissionCopy
 }
 
 function TerminalRunner({ m }: { m: TerminalMission }) {
-  const { lang, t } = useLang();
-  const copy = missionText(m, lang);
+  const { lang, t, d } = useLang();
+  const copy = missionText(m, d);
   const ctl = useSimulation(() => createMissionSim(m));
   const { sim } = ctl;
   const [hints, setHints] = useState(0);
@@ -214,7 +214,7 @@ function TerminalRunner({ m }: { m: TerminalMission }) {
 }
 
 function Meter({ label, value, limit, fmt }: { label: string; value: number; limit: number; fmt: (v: number) => string }) {
-  const { t } = useLang();
+  const { t, d } = useLang();
   const ok = value <= limit;
   const max = Math.max(limit * 1.6, Number.isFinite(value) ? value * 1.05 : limit * 1.6);
   const w = Number.isFinite(value) ? Math.min(100, (value / max) * 100) : 100;
@@ -237,8 +237,8 @@ function Meter({ label, value, limit, fmt }: { label: string; value: number; lim
 }
 
 function DesignerRunner({ m }: { m: DesignerMission }) {
-  const { lang, t } = useLang();
-  const copy = missionText(m, lang);
+  const { t, d: dict } = useLang();
+  const copy = missionText(m, dict);
   const [d, setD] = useState<Design>(m.initial);
   const [hints, setHints] = useState(0);
   const [result, setResult] = useState<Result | null>(null);

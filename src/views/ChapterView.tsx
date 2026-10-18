@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ATLAS, getEntry } from "@/content/atlas";
@@ -11,17 +13,16 @@ import { Widget } from "@/components/widgets/Widgets";
 import { Checkpoint } from "@/components/Checkpoint";
 import { ChapterToc } from "@/components/ChapterToc";
 import { BossCard } from "@/components/BossCard";
-import { localize, type Lang } from "@/i18n";
-import { t } from "@/i18n/ui";
+import { useLang } from "@/i18n/client";
 
-export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
+export function ChapterView({ track }: { track: string }) {
+  const { t, d, L } = useLang();
   const base = getChapter(track);
   if (!base) notFound();
-  const c = chapterText(base, lang);
-  const titles = Object.fromEntries(ATLAS.map((e) => [e.slug, entryText(e.slug, lang)!.title]));
-  const next = CHAPTERS[c.n] ? chapterText(CHAPTERS[c.n], lang) : undefined;
-  const prev = c.n > 1 ? chapterText(CHAPTERS[c.n - 2], lang) : undefined;
-  const L = (p: string) => localize(lang, p);
+  const c = chapterText(base, d);
+  const titles = Object.fromEntries(ATLAS.map((e) => [e.slug, entryText(e.slug, d)!.title]));
+  const next = CHAPTERS[c.n] ? chapterText(CHAPTERS[c.n], d) : undefined;
+  const prev = c.n > 1 ? chapterText(CHAPTERS[c.n - 2], d) : undefined;
   return (
     <div className="pb-layout">
       <aside className="pb-toc">
@@ -29,13 +30,13 @@ export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
       </aside>
       <article className="pb-article">
         <details className="pb-mobile-toc">
-          <summary>{t(lang, "chapter.contents")}</summary>
+          <summary>{t("chapter.contents")}</summary>
           <div className="pb-toc">
             <ChapterToc current={c.track} titles={titles} />
           </div>
         </details>
         <header className="pb-head">
-          <div className="num">{t(lang, "chapter.n", { n: c.n })}</div>
+          <div className="num">{t("chapter.n", { n: c.n })}</div>
           <h1>{c.title}</h1>
           <p className="kicker">{c.kicker}</p>
           <p className="pb-intro">{c.intro}</p>
@@ -43,7 +44,7 @@ export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
 
         {TRACK_LEVELS[c.track].map((slug, i) => {
           const e = getEntry(slug)!;
-          const tx = entryText(slug, lang)!;
+          const tx = entryText(slug, d)!;
           return (
             <section key={slug} id={slug} className="pb-section">
               <div className="main prose" style={{ maxWidth: "none" }}>
@@ -51,15 +52,15 @@ export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
                   <span className="n">{c.n}.{i + 1}</span>
                   {tx.title}
                 </h2>
-                <Markdown source={tx.body} lang={lang} />
+                <Markdown source={tx.body} />
                 {e.widget && <Widget id={e.widget} />}
                 <Checkpoint slug={slug} />
               </div>
               <aside className="pb-aside">
-                <span className="lbl">{t(lang, "chapter.inShort")}</span>
+                <span className="lbl">{t("chapter.inShort")}</span>
                 <p>{tx.summary}</p>
                 <div className="refs">
-                  <span className="lbl">{t(lang, "chapter.sources")}</span>
+                  <span className="lbl">{t("chapter.sources")}</span>
                   {e.sources.slice(0, 3).map((id) => {
                     const src: Source = SOURCES[id];
                     return (
@@ -76,7 +77,7 @@ export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
 
         <div id="boss" style={{ scrollMarginTop: 80 }}>
           {TRACK_BOSSES[c.track].map((id) => {
-            const m = missionText(getMission(id)!, lang);
+            const m = missionText(getMission(id)!, d);
             return <BossCard key={id} id={id} track={c.track} title={m.title} tagline={m.tagline} />;
           })}
         </div>
@@ -90,10 +91,10 @@ export function ChapterView({ lang, track }: { lang: Lang; track: string }) {
           <span className="spacer" />
           {next ? (
             <Link href={L(`/play/${next.track}/`)} className="btn primary">
-              {t(lang, "chapter.n", { n: next.n })}: {next.title} →
+              {t("chapter.n", { n: next.n })}: {next.title} →
             </Link>
           ) : (
-            <Link href={L("/")} className="btn primary">{t(lang, "chapter.backToContents")}</Link>
+            <Link href={L("/")} className="btn primary">{t("chapter.backToContents")}</Link>
           )}
         </div>
       </article>

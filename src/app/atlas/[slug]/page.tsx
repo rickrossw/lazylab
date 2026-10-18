@@ -12,5 +12,5 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  return <GlossaryEntryView lang="en" slug={(await params).slug} />;
+  return <GlossaryEntryView slug={(await params).slug} />;
 }

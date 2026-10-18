@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import { Footer, Nav } from "@/components/Nav";
 import { AuthProvider } from "@/components/Auth";
+import { LangProvider } from "@/i18n/client";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap", weight: ["600", "700", "800"] });
+const inter = Inter({ subsets: ["latin", "latin-ext", "cyrillic", "greek", "vietnamese"], variable: "--font-inter", display: "swap" });
+const archivo = Archivo({ subsets: ["latin", "latin-ext", "vietnamese"], variable: "--font-archivo", display: "swap", weight: ["600", "700", "800"] });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
 const SITE_URL = "https://lazylab.com";
@@ -52,11 +53,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
+        <LangProvider>
         <AuthProvider>
           <Nav />
           <main>{children}</main>
         <Footer />
         </AuthProvider>
+        </LangProvider>
       </body>
     </html>
   );

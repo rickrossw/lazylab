@@ -9,7 +9,7 @@ import { useLang } from "@/i18n/client";
 import { useProgress } from "./useProgress";
 
 export function ChapterToc({ current, titles }: { current?: TrackId; titles: Record<string, string> }) {
-  const { lang, t, L } = useLang();
+  const { lang, t, L, d } = useLang();
   const p = useProgress();
   const [active, setActive] = useState<string | null>(null);
   useEffect(() => {
@@ -28,7 +28,7 @@ export function ChapterToc({ current, titles }: { current?: TrackId; titles: Rec
 
   return (
     <nav aria-label={t("toc.label")}>
-      {chaptersL(lang).map((c) => (
+      {chaptersL(d).map((c) => (
         <div key={c.track}>
           <Link href={L(`/play/${c.track}/`)} className={`ch${c.track === current ? " current" : ""}`}>
             {c.n}. {c.title}
@@ -44,7 +44,7 @@ export function ChapterToc({ current, titles }: { current?: TrackId; titles: Rec
             TRACK_BOSSES[c.track].map((id) => (
               <a key={id} href="#boss" className="sec boss">
                 <span className={`tick${p.missions[id] ? " done" : ""}`}>{p.missions[id] ? "✓" : "◆"}</span>
-                {t("toc.boss", { title: missionTitle(id, lang) })}
+                {t("toc.boss", { title: missionTitle(id, d) })}
               </a>
             ))}
         </div>
