@@ -15,27 +15,13 @@ const LINKS: { href: string; key: UIKey }[] = [
   { href: "/atlas/", key: "nav.glossary" },
 ];
 
-function LanguageMenu() {
-  const { choice, setChoice } = useLangState();
-  const { t } = useLang();
+function LanguageToggle() {
+  const { lang, setChoice } = useLangState();
+  const other = lang === "es" ? LANGUAGES[0] : LANGUAGES[1];
   return (
-    <label className="lang-menu" title={t("nav.lang")}>
-      <span aria-hidden className="globe">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18" />
-        </svg>
-      </span>
-      <span className="sr-only">{t("nav.lang")}</span>
-      <select value={choice} onChange={(e) => setChoice(e.target.value)} aria-label={t("nav.lang")}>
-        <option value="auto">{t("nav.auto")}</option>
-        {LANGUAGES.map((l) => (
-          <option key={l.code} value={l.code} lang={l.code}>
-            {l.name}
-          </option>
-        ))}
-      </select>
-    </label>
+    <button className="lang-btn" onClick={() => setChoice(other.code)} lang={other.code} title={other.name} aria-label={other.name}>
+      {other.code.toUpperCase()}
+    </button>
   );
 }
 
@@ -73,7 +59,7 @@ export function Nav() {
         </nav>
         <span className="spacer" />
         <AccountButton />
-        <LanguageMenu />
+        <LanguageToggle />
         <button className="icon-btn" onClick={toggleTheme} aria-label={t("nav.theme")} title={t("nav.theme")}>
           {theme === "dark" ? "☀" : "☾"}
         </button>
@@ -83,11 +69,10 @@ export function Nav() {
 }
 
 export function Footer() {
-  const { t, machine } = useLang();
+  const { t } = useLang();
   return (
     <footer className="footer">
       <div className="container">
-        {machine && <p style={{ marginBottom: 8, color: "var(--text-2)" }}>{t("mt.notice")}</p>}
         <p style={{ marginBottom: 8 }}>{t("footer.about")}</p>
         <div className="row" style={{ gap: 18 }}>
           <span>{t("footer.shoulders")}</span>

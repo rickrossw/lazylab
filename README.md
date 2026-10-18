@@ -22,7 +22,7 @@ LazyLab teaches how to design, run, tune, monitor and secure GPU clusters, and y
 - **Glossary** (`/atlas`): every concept as a standalone reference page.
 - **Terminal**: about 40 commands with realistic output (`sbatch`, `scontrol`, `nvidia-smi`, `dcgmi`, `dmesg`, `ibstat`, `ss`, `systemctl`, `crontab`, `ssh`, `pdsh`, pipes, `sudo`, …).
 
-**Languages**: 29 languages, chosen from the globe menu in the nav ("Automatic" follows the visitor's browser language). English is the source, Spanish is hand-translated, and the other 27 are machine-translated at build time with open-source models ([Argos Translate](https://github.com/argosopentech/argos-translate) / OPUS-MT, run offline via CTranslate2). Technical terms stay in English. Share a page in any language with `?lang=fr`, `?lang=ja`, and so on. Old `/es/...` links still open in Spanish. Simulated terminal output stays in English, as on real clusters.
+**Languages**: English and Spanish. The EN/ES button in the nav switches the page in place and remembers the choice; Spanish-language browsers start in Spanish. Share a Spanish link with `?lang=es` (old `/es/...` links still work). Simulated terminal output stays in English, as on real clusters.
 
 Design: visual language inspired by nebius.com; long-form chapter layout inspired by the Ultra-Scale Playbook.
 
@@ -83,7 +83,7 @@ scripts/
 
 ## Adding content
 
-- **Translations**: interface strings live in `src/i18n/ui.ts`; hand-written Spanish lives in `src/content/es/`. After changing any text, run `npm run i18n:translate` (downloads ~3 GB of models to `~/.cache/lazylab-mt` the first time, then only translates new or changed sentences) and commit `public/i18n/` and `i18n/`. Tests fail if a language is missing strings or if a translation broke a cross-link, code snippet or placeholder.
+- **Translations**: interface strings live in `src/i18n/ui.ts` and Spanish content in `src/content/es/`. After changing text, run `npm run i18n:extract` to regenerate `public/i18n/es.json`. Tests fail if any Spanish text is missing or its answers don't match the English.
 - **Section**: add an entry to one of `src/content/atlas-*.ts` (and its Spanish text in `src/content/es/`), place it in a chapter in `TRACK_LEVELS` and write its checkpoint in `CHALLENGES` (`src/content/levels.ts`). Cross-link with `[[slug]]`. Tests fail on broken links, unplaced sections or invalid answers.
 - **Mission**: add a `TerminalMission` (scenario, objectives, hints, debrief, golden `solution`) to `src/missions/index.ts` and append it to `MISSIONS`. Tests replay the golden solution and fail if the mission can't be won or isn't deterministic.
 

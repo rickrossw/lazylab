@@ -11,8 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "deploy": "bash scripts/deploy-pages.sh",
-    "i18n:extract": "tsx scripts/i18n/extract.ts",
-    "i18n:translate": "bash scripts/i18n/translate.sh"
+    "i18n:extract": "tsx scripts/i18n/extract.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",

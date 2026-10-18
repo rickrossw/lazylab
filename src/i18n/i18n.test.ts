@@ -29,12 +29,8 @@ describe("translation files", () => {
 describe("automatic language", () => {
   test("matches browser preferences to supported languages", () => {
     expect(matchLanguage(["es-MX", "en"])).toBe("es");
-    expect(matchLanguage(["pt-BR"])).toBe("pt-BR");
-    expect(matchLanguage(["pt-PT"])).toBe("pt");
-    expect(matchLanguage(["zh-TW"])).toBe("zh-Hant");
-    expect(matchLanguage(["zh-CN"])).toBe("zh-Hans");
-    expect(matchLanguage(["no"])).toBe("nb");
-    expect(matchLanguage(["sw", "fr-CA"])).toBe("fr");
-    expect(matchLanguage(["xx"])).toBe("en");
+    expect(matchLanguage(["en-GB"])).toBe("en");
+    expect(matchLanguage(["fr-FR", "es"])).toBe("es");
+    expect(matchLanguage(["fr-FR"])).toBe("en");
   });
 });
