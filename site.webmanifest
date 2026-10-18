@@ -1,0 +1,14 @@
+{
+  "name": "LazyLab — learn to run GPU clusters",
+  "short_name": "LazyLab",
+  "description": "Learn to run GPU clusters by playing with a simulated cluster.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#052b42",
+  "theme_color": "#052b42",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
